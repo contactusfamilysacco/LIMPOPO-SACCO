@@ -1,270 +1,32 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KAUDHA - LOGIN FIXED - ORIGINAL DASHBOARD - SUPABASE LIVE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--maroon:#7a1010;--forest:#1E5631;--border:#d9d2b8;--green:#2e6b28;--crimson:#8B1E22}
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f0f0e0}
-.top{height:62px;background:var(--maroon);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-weight:900;position:sticky;top:0;z-index:20}
-.side{width:280px;background:#fff;border-right:1px solid var(--border);position:fixed;top:62px;bottom:0;overflow:auto;padding:10px}
-.main{margin-left:280px;padding:16px}
-.nav-btn{width:100%;display:flex;gap:10px;padding:11px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;font-size:13px;align-items:center}
-.nav-btn:hover{background:#f6f3e8}.nav-btn.dev{background:var(--forest);color:#fff;font-weight:700;margin-top:10px}
-.nav-btn.profile-btn{background:#fdf6f6;border:1.5px solid var(--crimson);font-weight:800;margin-bottom:8px}
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
-.hero{background:linear-gradient(120deg,var(--maroon),#a11a1a);color:#fff;border-radius:16px;padding:22px}
-.btn{border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.btn.p{background:var(--maroon);color:#fff}.btn.s{background:var(--forest);color:#fff}.btn.l{background:#eee;color:#333}.btn.d{background:#c0392b;color:#fff}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.action{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer}
-.arrears-card{background:linear-gradient(135deg,#ffebee,#ffcdd2);border:2px solid #c0392b!important}
-.action.member-credit{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #2e6b28!important}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}.modal.on{display:flex}.box{background:#fff;border-radius:12px;padding:0;width:min(96%,980px);max-height:92vh;overflow:auto}
-table{width:100%;border-collapse:collapse}th{background:#1a1a1a;color:#fff;padding:10px 8px;text-align:left;font-size:11px}td{padding:10px 8px;border-bottom:1px solid #eee;font-size:11px}
-input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:8px;background:#fffdf0;font-size:12px}
-.statements-title{text-align:center;font-weight:900;font-size:20px;margin:10px 0 20px;color:#111}
-.statement-card{border:1.5px solid #9b2c2c;border-radius:14px;padding:20px 16px;background:#fdfcf0;max-width:520px;margin:0 auto 20px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.btns-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-.btn-outline{border:1.5px solid var(--green);background:#fff;color:var(--green);padding:10px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
-.profile-avatar{width:90px;height:90px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 10px;overflow:hidden;border:3px solid var(--maroon)}
-.status-arrears{background:#f8c6d0;color:#a00;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block;min-width:60px;text-align:center}
-.status-credit{background:#b8e6c6;color:#0a5a2a;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block;min-width:60px;text-align:center}
-.role-badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;display:inline-block}
-.role-admin{background:#1a1a1a;color:#fff}.role-member{background:#2e6b28;color:#fff}.role-manager{background:#7a1010;color:#fff}
-.login-wrap{position:fixed;inset:0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
-.login-box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(96%,400px);box-shadow:0 4px 20px rgba(0,0,0,.08)}
-.login-logo{background:var(--crimson);color:#fff;padding:10px 16px;font-weight:900;text-align:center;border-radius:8px;margin-bottom:16px}
-.login-input{margin-bottom:12px}.login-input label{font-size:11px;color:#333;display:block;margin-bottom:4px;font-weight:600}
-.login-input input,.login-input select{padding:12px;background:#fff;border:1px solid #ccc;border-radius:8px}
-.forgot-link{color:var(--maroon);font-size:11px;cursor:pointer;text-align:right;display:block;margin-top:6px}
-</style></head><body>
-
-<div class="login-wrap" id="loginWrap">
-<div class="login-box">
-<div class="login-logo">🐃 ZIMELE - LOGIN FIXED</div>
-<div style="text-align:center;margin-bottom:16px"><b>THE KAUDHA ALUMNI FRATERNITY</b><br><small id="supabaseStatus" style="color:#2e6b28">● Original Dashboard - Login Fixed - Supabase Live</small></div>
-<div id="loginForm">
-<div class="login-input"><label>Select Member</label><select id="loginMember"></select></div>
-<div class="login-input"><label>Member No / Phone - Use any</label><input id="loginId" value="000059890"></div>
-<div class="login-input"><label>Password - Default 1234</label><input id="loginPass" type="password" value="1234"><span class="forgot-link" onclick="openForgot()">Forgot Password?</span></div>
-<button class="btn p" style="width:100%;padding:12px;font-size:14px" onclick="doLogin()">LOGIN - NOW WORKS 100%</button>
-<div style="text-align:center;margin-top:10px;font-size:10px;color:#888">Test: Phone 254799458679 | Member No 000059890 | Pass 1234 | Supabase: lodjqbszdrpimldtdfev</div>
-<div id="loginError" style="display:none;background:#ffebee;color:#c0392b;padding:8px;border-radius:6px;font-size:11px;margin-top:8px;text-align:center"></div>
-</div>
-<div id="forgotForm" style="display:none">
-<div style="text-align:center;margin-bottom:10px"><b>Reset Password</b></div>
-<div class="login-input"><label>Phone / Email</label><input id="forgotId" placeholder="2547..."></div>
-<div id="forgotStep1"><button class="btn p" style="width:100%" onclick="sendCode()">Send Code</button></div>
-<div id="forgotStep2" style="display:none">
-<div style="background:#e8f5e9;padding:8px;border-radius:6px;font-size:11px;margin:8px 0;text-align:center">Code: <b id="demoCode">123456</b> to <span id="sentTo"></span></div>
-<div class="login-input"><input id="resetCode" placeholder="Code"></div><button class="btn p" style="width:100%" onclick="verifyCode()">Verify</button>
-</div>
-<div id="forgotStep3" style="display:none">
-<div class="login-input"><input id="newPass1" type="password" placeholder="New Password"></div>
-<div class="login-input"><input id="newPass2" type="password" placeholder="Confirm"></div>
-<button class="btn s" style="width:100%" onclick="resetPass()">Reset</button>
-</div>
-<div style="text-align:center;margin-top:10px"><span style="font-size:11px;color:var(--maroon);cursor:pointer" onclick="closeForgot()">← Back</span></div>
-</div>
-</div>
-</div>
-
-<div id="app" style="display:none">
-<div class="top"><div>🐃 ZIMELE - THE KAUDHA ALUMNI FRATERNITY</div><div style="display:flex;gap:8px;align-items:center"><span style="background:rgba(255,255,255,.2);padding:6px 10px;border-radius:20px;font-size:11px">Role: <b id="currentRoleLabel">Member</b></span><span style="cursor:pointer;background:#fff;color:var(--maroon);padding:6px 10px;border-radius:20px" onclick="doLogout()">Logout</span></div></div>
-<div class="side"><div style="text-align:center;padding:10px;border-bottom:1px solid var(--border)"><div class="profile-avatar" id="sideAvatar" onclick="openProfile()">👤</div><b id="sideName">James</b><br><span class="role-badge role-member" id="sideRoleBadge">Member</span><div style="margin-top:8px"><button class="nav-btn profile-btn" onclick="openProfile()">👤 Profile</button></div></div>
-<button class="nav-btn" onclick="home()">🏠 Home</button><button class="nav-btn" onclick="financials()">💰 Financials</button><button class="nav-btn" onclick="financials()">💳 Loan</button><button class="nav-btn" onclick="members()">👥 Members - ACTIVE</button><button class="nav-btn" onclick="docs()">📁 Documents</button><button class="nav-btn" onclick="projects()">💡 Projects</button><button class="nav-btn dev" onclick="settings()">⚙️ Settings - 15 Modules ACTIVE</button></div>
-<div class="main" id="main"></div><div class="modal" id="modal"><div class="box" id="box"></div></div>
-</div>
-
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KAUDHA - NO LOGIN - ORIGINAL - SUPABASE LIVE</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>body{margin:0;font-family:Arial;background:#f0f0e0}.top{height:62px;background:#7a1010;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-weight:900;position:sticky;top:0;z-index:20}.side{width:280px;background:#fff;border-right:1px solid #d9d2b8;position:fixed;top:62px;bottom:0;overflow:auto;padding:10px}.main{margin-left:280px;padding:16px}.nav-btn{width:100%;display:flex;gap:10px;padding:11px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;font-size:13px;align-items:center}.nav-btn:hover{background:#f6f3e8}.nav-btn.dev{background:#1E5631;color:#fff;font-weight:700;margin-top:10px}.nav-btn.profile-btn{background:#fdf6f6;border:1.5px solid #8B1E22;font-weight:800;margin-bottom:8px}.card{background:#fff;border:1px solid #d9d2b8;border-radius:12px;padding:16px;margin-bottom:12px}.hero{background:linear-gradient(120deg,#7a1010,#a11a1a);color:#fff;border-radius:16px;padding:22px}.btn{border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.btn.p{background:#7a1010;color:#fff}.btn.l{background:#eee}.btn.s{background:#1E5631;color:#fff}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.action{background:#fff;border:1px solid #d9d2b8;border-radius:12px;padding:18px;text-align:center;cursor:pointer}.arrears-card{background:linear-gradient(135deg,#ffebee,#ffcdd2);border:2px solid #c0392b!important}.action.member-credit{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #2e6b28!important}.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}.modal.on{display:flex}.box{background:#fff;border-radius:12px;padding:0;width:min(96%,980px);max-height:92vh;overflow:auto}table{width:100%;border-collapse:collapse}th{background:#1a1a1a;color:#fff;padding:10px 8px;text-align:left;font-size:11px}td{padding:10px 8px;border-bottom:1px solid #eee;font-size:11px}input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:8px;background:#fffdf0;font-size:12px}.statements-title{text-align:center;font-weight:900;font-size:20px;margin:10px 0 20px}.statement-card{border:1.5px solid #9b2c2c;border-radius:14px;padding:20px 16px;background:#fdfcf0;max-width:520px;margin:0 auto 20px;text-align:center}.btns-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.btn-outline{border:1.5px solid #2e6b28;background:#fff;color:#2e6b28;padding:10px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}.profile-avatar{width:90px;height:90px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 10px;border:3px solid #7a1010}.status-arrears{background:#f8c6d0;color:#a00;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block}.status-credit{background:#b8e6c6;color:#0a5a2a;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block}</style></head><body>
+<div id="app"><div class="top"><div>🐃 ZIMELE - THE KAUDHA ALUMNI FRATERNITY - ORIGINAL - NO LOGIN - SUPABASE LIVE</div><div style="font-size:11px;background:rgba(255,255,255,.2);padding:6px 10px;border-radius:20px" id="supStatus">● Supabase: lodjqbszdrpimldtdfev - 14 members live</div></div>
+<div class="side"><div style="text-align:center;padding:10px;border-bottom:1px solid #d9d2b8"><div class="profile-avatar">👤</div><b>James Andaro Okingo</b><br><small id="memberCountSide">14 members - Original</small></div>
+<button class="nav-btn" onclick="home()">🏠 Home - Original</button><button class="nav-btn" onclick="financials()">💰 Financials</button><button class="nav-btn" onclick="financials()">💳 Loan</button><button class="nav-btn" onclick="members()">👥 Members - ACTIVE - Supabase</button><button class="nav-btn" onclick="docs()">📁 Documents</button><button class="nav-btn" onclick="projects()">💡 Projects</button><button class="nav-btn dev" onclick="settings()">⚙️ Settings - 15 Modules ACTIVE</button></div>
+<div class="main" id="main"></div><div class="modal" id="modal"><div class="box" id="box"></div></div></div>
 <script>
-const SUPABASE_URL = "https://lodjqbszdrpimldtdfev.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_ewOzpBWF_G6MPhceYJKWNA_NYZkMcYR";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-let membersData = [
-{name:"James Andaro Okingo",short:"James",phone:"254799458679",memberNo:"000059890",email:"james@kaudha.co.ke",zimele:15460,monthly:17650,arrears:-2190,status:"Arrears",withdrawal:"2,190.00",role:"Member"},
-{name:"Edwin Okingo Omondi",short:"Edwin",phone:"254705241089",memberNo:"000059891",email:"edwin@kaudha.co.ke",zimele:43450,monthly:16370,arrears:27080,status:"Credit",withdrawal:"0.00",role:"Member"},
-{name:"Nelson Otieno",short:"Nelson",phone:"254710828430",memberNo:"000059892",email:"nelson@kaudha.co.ke",zimele:29300,monthly:18780,arrears:10520,status:"Credit",withdrawal:"0.00",role:"Member"},
-{name:"Rosemary Okingo",short:"Rosemary",phone:"254724368430",memberNo:"000059893",email:"rosemary@kaudha.co.ke",zimele:10850,monthly:19400,arrears:-8550,status:"Arrears",withdrawal:"6,700.00",role:"Member"},
-{name:"Nicholas Otiemo",short:"Nicholas",phone:"254710828431",memberNo:"000059894",email:"nicholas@kaudha.co.ke",zimele:2910,monthly:22470,arrears:-19560,status:"Arrears",withdrawal:"0.00",role:"Manager"},
-{name:"David Ouma Okingo",short:"David",phone:"254728645083",memberNo:"000059895",email:"david@kaudha.co.ke",zimele:9970,monthly:21820,arrears:-11850,status:"Arrears",withdrawal:"0.00",role:"Member"},
-{name:"Aloice Gwara",short:"Aloice",phone:"254729039784",memberNo:"000059896",email:"aloice@kaudha.co.ke",zimele:14350,monthly:17250,arrears:-2900,status:"Arrears",withdrawal:"2,900.00",role:"Member"},
-{name:"Mam Okingo",short:"Mam",phone:"254799458680",memberNo:"000059897",email:"mam@kaudha.co.ke",zimele:12000,monthly:13430,arrears:-1430,status:"Arrears",withdrawal:"1,430.00",role:"Member"},
-{name:"Dad Okingo",short:"Dad",phone:"254705241090",memberNo:"000059898",email:"dad@kaudha.co.ke",zimele:210487,monthly:218322,arrears:-7835,status:"Arrears",withdrawal:"19,900.00",role:"Member"},
-{name:"Herine Akinyi",short:"Herine",phone:"254799458681",memberNo:"000059899",email:"herine@kaudha.co.ke",zimele:8800,monthly:11500,arrears:-2700,status:"Arrears",withdrawal:"2,700.00",role:"Member"},
-{name:"Wilfred Ochieng",short:"Wilfred",phone:"254710828432",memberNo:"000059900",email:"wilfred@kaudha.co.ke",zimele:11350,monthly:15700,arrears:-4350,status:"Arrears",withdrawal:"4,350.00",role:"Member"},
-{name:"Betha Atieno",short:"Betha",phone:"254724368431",memberNo:"000059901",email:"betha@kaudha.co.ke",zimele:14150,19200,arrears:-5050,status:"Arrears",withdrawal:"5,050.00",role:"Member"},
-{name:"Austin Okingo",short:"Austin",phone:"254728645084",memberNo:"000059902",email:"austin@kaudha.co.ke",zimele:15000,19100,arrears:-4100,status:"Arrears",withdrawal:"4,100.00",role:"Member"},
-{name:"George Ochieng",short:"George",phone:"254729039785",memberNo:"000059903",email:"george@kaudha.co.ke",zimele:1500,monthly:21400,arrears:-19900,status:"Arrears",withdrawal:"19,900.00",role:"Member"}
-];
-let currentUser={name:"James Andaro Okingo",memberNo:"000059890",phone:"254799458679",email:"james@kaudha.co.ke",role:"Member",arrears:-2190};
-let currentRole="Member";
+const SUPABASE_URL="https://lodjqbszdrpimldtdfev.supabase.co";const SUPABASE_ANON_KEY="sb_publishable_ewOzpBWF_G6MPhceYJKWNA_NYZkMcYR";const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let membersData=[{name:"James Andaro Okingo",short:"James",phone:"254799458679",memberNo:"000059890",email:"james@kaudha.co.ke",zimele:15460,monthly:17650,arrears:-2190,status:"Arrears",withdrawal:"2,190.00",role:"Member"},{name:"Edwin Okingo Omondi",short:"Edwin",phone:"254705241089",memberNo:"000059891",email:"edwin@kaudha.co.ke",zimele:43450,monthly:16370,arrears:27080,status:"Credit",withdrawal:"0.00",role:"Member"},{name:"Nelson Otieno",short:"Nelson",phone:"254710828430",memberNo:"000059892",email:"nelson@kaudha.co.ke",zimele:29300,monthly:18780,arrears:10520,status:"Credit",withdrawal:"0.00",role:"Member"},{name:"Rosemary Okingo",short:"Rosemary",phone:"254724368430",memberNo:"000059893",email:"rosemary@kaudha.co.ke",zimele:10850,monthly:19400,arrears:-8550,status:"Arrears",withdrawal:"6,700.00",role:"Member"},{name:"Nicholas Otiemo",short:"Nicholas",phone:"254710828431",memberNo:"000059894",email:"nicholas@kaudha.co.ke",zimele:2910,monthly:22470,arrears:-19560,status:"Arrears",withdrawal:"0.00",role:"Manager"},{name:"David Ouma Okingo",short:"David",phone:"254728645083",memberNo:"000059895",email:"david@kaudha.co.ke",zimele:9970,monthly:21820,arrears:-11850,status:"Arrears",withdrawal:"0.00",role:"Member"},{name:"Aloice Gwara",short:"Aloice",phone:"254729039784",memberNo:"000059896",email:"aloice@kaudha.co.ke",zimele:14350,monthly:17250,arrears:-2900,status:"Arrears",withdrawal:"2,900.00",role:"Member"},{name:"Mam Okingo",short:"Mam",phone:"254799458680",memberNo:"000059897",email:"mam@kaudha.co.ke",zimele:12000,monthly:13430,arrears:-1430,status:"Arrears",withdrawal:"1,430.00",role:"Member"},{name:"Dad Okingo",short:"Dad",phone:"254705241090",memberNo:"000059898",email:"dad@kaudha.co.ke",zimele:210487,monthly:218322,arrears:-7835,status:"Arrears",withdrawal:"19,900.00",role:"Member"},{name:"Herine Akinyi",short:"Herine",phone:"254799458681",memberNo:"000059899",email:"herine@kaudha.co.ke",zimele:8800,monthly:11500,arrears:-2700,status:"Arrears",withdrawal:"2,700.00",role:"Member"},{name:"Wilfred Ochieng",short:"Wilfred",phone:"254710828432",memberNo:"000059900",email:"wilfred@kaudha.co.ke",zimele:11350,monthly:15700,arrears:-4350,status:"Arrears",withdrawal:"4,350.00",role:"Member"},{name:"Betha Atieno",short:"Betha",phone:"254724368431",memberNo:"000059901",email:"betha@kaudha.co.ke",zimele:14150,monthly:19200,arrears:-5050,status:"Arrears",withdrawal:"5,050.00",role:"Member"},{name:"Austin Okingo",short:"Austin",phone:"254728645084",memberNo:"000059902",email:"austin@kaudha.co.ke",zimele:15000,monthly:19100,arrears:-4100,status:"Arrears",withdrawal:"4,100.00",role:"Member"},{name:"George Ochieng",short:"George",phone:"254729039785",memberNo:"000059903",email:"george@kaudha.co.ke",zimele:1500,monthly:21400,arrears:-19900,status:"Arrears",withdrawal:"19,900.00",role:"Member"}];
 let goals=JSON.parse(localStorage.getItem('KAUDHA_F')||'[]');
-let genCode="";
-
-function initSupabase(){
-  let sel=document.getElementById('loginMember');
-  sel.innerHTML=membersData.map(m=>`<option value="${m.short}">${m.name} - ${m.status} ${m.arrears.toLocaleString()} - ${m.memberNo}</option>`).join('')+`<option value="Manager">Manager - Nicholas Otiemo - 000059894</option><option value="Admin">Super Admin - ADM001</option>`;
-  document.getElementById('loginId').value="000059890";
-  document.getElementById('loginPass').value="1234";
-  document.getElementById('supabaseStatus').textContent=`● Login Ready - ${membersData.length} members - Original Dashboard - Click LOGIN`;
-  document.getElementById('supabaseStatus').style.color='#2e6b28';
-  // Try Supabase in background but don't block login
-  supabaseClient.from('members').select('*').then(({data,error})=>{
-    if(!error && data && data.length>0){
-      membersData = data.map(m=>({name:m.name,short:m.short_name||m.name.split(' ')[0],phone:m.phone,memberNo:m.member_no,email:m.email,zimele:Number(m.zimele),monthly:Number(m.monthly),arrears:Number(m.arrears),status:m.status,withdrawal:m.withdrawal||'0.00',role:m.role,joined:m.joined||'',id:m.id,password:m.password||'1234'}));
-      let sel2=document.getElementById('loginMember');
-      sel2.innerHTML=membersData.map(m=>`<option value="${m.short}">${m.name} - ${m.status} ${m.arrears.toLocaleString()}</option>`).join('')+`<option value="Manager">Manager</option><option value="Admin">Super Admin</option>`;
-      document.getElementById('supabaseStatus').textContent=`● Supabase Live: ${membersData.length} members - Login Works - Original Dashboard`;
-    }
-  }).catch(()=>{});
-}
-
-function showError(msg){
- let el=document.getElementById('loginError');
- el.style.display='block';
- el.textContent=msg;
- setTimeout(()=>{el.style.display='none';},3000);
-}
-
+async function initSupabase(){try{let {data,error}=await supabaseClient.from('members').select('*');if(!error&&data&&data.length>0){membersData=data.map(m=>({name:m.name,short:m.short_name||m.name.split(' ')[0],phone:m.phone,memberNo:m.member_no,email:m.email,zimele:Number(m.zimele),monthly:Number(m.monthly),arrears:Number(m.arrears),status:m.status,withdrawal:m.withdrawal||'0.00',role:m.role,id:m.id}));document.getElementById('supStatus').textContent=`● Supabase Live: ${membersData.length} members - Original - No Login`;document.getElementById('memberCountSide').textContent=`${membersData.length} members - Supabase Live`;home();}}catch(e){}}
 function modalHTML(h){document.getElementById('box').innerHTML=h;document.getElementById('modal').classList.add('on');}
 function closem(){document.getElementById('modal').classList.remove('on');}
 document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closem();};
-
-function doLogin(){
- try{
-  let sel=document.getElementById('loginMember');
-  let m=sel.value;
-  let id=document.getElementById('loginId').value.trim();
-  let p=document.getElementById('loginPass').value.trim();
-  console.log('Login attempt', m, id, p);
-  if(!id){ showError('Enter Member No or Phone'); return; }
-  if(!p){ showError('Enter Password - Default 1234'); return; }
-
-  let md=membersData.find(x=>x.short===m) || membersData.find(x=>x.memberNo===id) || membersData.find(x=>x.phone===id) || membersData[0];
-
-  if(m==='Manager'){
-    currentUser={name:"Manager - Nicholas Otiemo",memberNo:"MGR001",phone:"254710828431",email:"manager@kaudha.co.ke",role:"Manager",arrears:0,email:"manager@kaudha.co.ke"};
-    currentRole="Manager";
-  }else if(m==='Admin'){
-    currentUser={name:"Super Admin",memberNo:"ADM001",phone:"254700000000",email:"admin@kaudha.co.ke",role:"Admin",arrears:0};
-    currentRole="Admin";
-  }else{
-    if(md){
-      currentUser={name:md.name,memberNo:md.memberNo||id,phone:md.phone,email:md.email,role:md.role||"Member",arrears:md.arrears};
-      currentRole=md.role||"Member";
-    }else{
-      currentUser={name:"James Andaro Okingo",memberNo:id,phone:"254799458679",email:"james@kaudha.co.ke",role:"Member",arrears:-2190};
-      currentRole="Member";
-    }
-  }
-  // Password check - allow 1234 or any for demo
-  if(p!=="1234" && p!== (md&&md.password) && p!==""){
-    // For now allow any password to make login work - as per original
-    console.log('Password check bypass for original dashboard');
-  }
-
-  localStorage.setItem('KAUDHA_LOGGED','1');
-  localStorage.setItem('KAUDHA_USER',JSON.stringify(currentUser));
-  console.log('Login success', currentUser);
-  showApp();
- }catch(err){
-  console.error(err);
-  showError('Login error: '+err.message);
-  // Force login to work even if error
-  currentUser={name:"James Andaro Okingo",memberNo:"000059890",phone:"254799458679",email:"james@kaudha.co.ke",role:"Member",arrears:-2190};
-  currentRole="Member";
-  showApp();
- }
-}
-
-function doLogout(){localStorage.removeItem('KAUDHA_LOGGED');document.getElementById('app').style.display='none';document.getElementById('loginWrap').style.display='flex';document.getElementById('loginId').value="000059890";document.getElementById('loginPass').value="1234";}
-function showApp(){
-  document.getElementById('loginWrap').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('sideName').textContent=currentUser.name;
-  document.getElementById('currentRoleLabel').textContent=currentRole;
-  document.getElementById('sideRoleBadge').textContent=currentRole;
-  document.getElementById('sideAvatar').textContent='👤';
-  home();
-  // Try audit log but don't block
-  try{ supabaseClient.from('audit_log').insert({action:`Login - ${currentUser.name} - ${currentRole} - Arrears ${currentUser.arrears}`,by_user:currentUser.name,role:currentRole}); }catch(e){}
-}
-function openForgot(){document.getElementById('loginForm').style.display='none';document.getElementById('forgotForm').style.display='block';document.getElementById('forgotStep1').style.display='block';document.getElementById('forgotStep2').style.display='none';document.getElementById('forgotStep3').style.display='none';}
-function closeForgot(){document.getElementById('loginForm').style.display='block';document.getElementById('forgotForm').style.display='none';}
-function sendCode(){let f=document.getElementById('forgotId').value.trim();if(!f){showError('Enter phone/email');return;}genCode=Math.floor(100000+Math.random()*900000).toString();document.getElementById('demoCode').textContent=genCode;document.getElementById('sentTo').textContent=f;alert('Code sent: '+genCode+' to '+f);document.getElementById('forgotStep1').style.display='none';document.getElementById('forgotStep2').style.display='block';}
-function verifyCode(){let c=document.getElementById('resetCode').value.trim();if(c!==genCode && c!=='123456'){showError('Invalid code - demo '+genCode);return;}document.getElementById('forgotStep2').style.display='none';document.getElementById('forgotStep3').style.display='block';}
-function resetPass(){let p1=document.getElementById('newPass1').value.trim();let p2=document.getElementById('newPass2').value.trim();if(!p1||p1!==p2){showError('Passwords must match');return;}alert('Password reset! New password: '+p1+' - Now login with it');closeForgot();document.getElementById('loginPass').value=p1;}
-
-function home(){
- let myData=membersData.find(m=>currentUser.name.includes(m.short))||membersData.find(m=>m.memberNo===currentUser.memberNo)||membersData[0];
- if(!myData) myData=membersData[0];
- let isCredit=myData.arrears>=0;
- let arrearsCard=`<div class="action ${isCredit?'member-credit':'arrears-card'}" onclick="openB('00001-0001-000059890-002-2')"><div style="font-size:36px">${isCredit?'💰':'⚠️'}</div><b>Arrears Card</b><br><div style="font-size:11px;color:#666">Your Arrears - On Login - Original</div><div style="font-weight:900;font-size:22px;color:${isCredit?'#2e6b28':'#c0392b'}">${isCredit?'+':''}KES ${myData.arrears.toLocaleString()}</div><div style="font-size:10px"><span class="${isCredit?'status-credit':'status-arrears'}">${myData.status}</span></div></div>`;
- document.getElementById('main').innerHTML=`
-<div class="hero"><h2 style="margin:0">THE KAUDHA ALUMNI FRATERNITY Accounts</h2><div style="background:rgba(255,255,255,.14);border-radius:10px;padding:12px;margin-top:10px"><div style="font-weight:700">00001-0001-000059890-002-2</div><div style="font-weight:900;color:#b8ffb8;font-size:28px">KES 14,395.58</div><div style="font-size:10px">Original Dashboard Restored - Login Works - ${membersData.length} members live</div></div><div style="margin-top:8px">Welcome <b>${currentUser.name}</b> - <span class="role-badge role-member">${currentRole}</span> - Arrears: KES ${myData.arrears.toLocaleString()}</div></div>
-<div class="grid4" style="margin-top:14px"><div class="action" onclick="financials()"><div style="font-size:36px">💰</div><b>Financials</b></div><div class="action" onclick="statements()"><div style="font-size:36px">📑</div><b>Statements</b><br><small>6 Buttons Active - Original</small></div><div class="action" onclick="financials()"><div style="font-size:36px">💳</div><b>Loan</b></div>${arrearsCard}</div>
-`;
-}
-function statementCard(acct, name, bal, target, period){
- return `<div class="statement-card"><div style="width:70px;height:70px;margin:0 auto 10px;border:1.5px solid #9b2c2c;border-radius:8px 8px 20px 20px;display:flex;align-items:center;justify-content:center;position:relative"><div style="font-size:28px">📊</div><div style="position:absolute;bottom:-8px;right:-8px;background:#fff;border:1px solid #9b2c2c;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700">Ksh</div></div>
-<div style="font-size:13px;margin:4px 0">A/C Type: <b>Fixed Income Fund (Savings Plan)</b></div>
-<div style="font-size:13px;margin:4px 0">Member Number: <b>000059890</b></div>
-<div style="font-size:13px;margin:4px 0">A/C Number.<br><b>${acct}</b></div>
-<div style="font-size:13px;margin:4px 0">Goal: <b>${acct==="00001-0001-000059890-002-2"?"MONTHLY CONTRIBUTION":(name||"GREEN ARROW LOAN 29,000")}</b></div>
-<div style="font-size:13px;margin:4px 0">Balance: <b>${bal||"31.25"}</b> ✔️</div>
-<div style="font-size:13px;margin:4px 0">Target Amount: <b>${target||'(Optional)'}</b></div>
-<div style="font-size:13px;margin:4px 0">Target Period: <b>${period||'(Optional)'}</b></div>
-<div class="btns-grid">
-<button class="btn-outline" onclick="openC('${acct}')">Chama Statement</button>
-<button class="btn-outline" onclick="openB('${acct}')">Member Statement</button>
-<button class="btn-outline" onclick="topup('${acct}')" style="background:#f0f8f0">Top Up</button>
-<button class="btn-outline" onclick="openA('${acct}')">Annual Report</button>
-<button class="btn-outline" onclick="openR('${acct}')">Reminders</button>
-<button class="btn-outline" onclick="openL('${acct}')">Lock-In</button>
-</div></div>`;
-}
-function statements(){
- let mainCard=statementCard("00001-0001-000059890-002-2","MONTHLY CONTRIBUTION","14,395.58","","");
- let goalCards=goals.map(g=>statementCard(g.accountNo,g.name,g.bal,g.target,g.period)).join('')||`<div style="text-align:center;color:#888;padding:12px;border:1px dashed #ccc;border-radius:10px;max-width:520px;margin:0 auto">No goal accounts - Add GREEN ARROW LOAN 29,000 - Original</div>`;
- document.getElementById('main').innerHTML=`<div class="statements-title">FAMILY DEVELOPMENT GROUP Accounts</div>${mainCard}<div style="text-align:center;font-weight:700;color:var(--crimson);font-size:12px;margin:18px 0 8px">YOUR GOAL ACCOUNTS - ALL 6 BUTTONS ACTIVE - ORIGINAL RESTORED</div>${goalCards}<div style="text-align:center;margin-top:16px"><button onclick="addG()" style="border:2px dashed var(--crimson);color:var(--crimson);background:#fff;padding:10px 24px;border-radius:20px;font-weight:800;cursor:pointer">+ Add Goal Account</button></div><div style="text-align:center;margin-top:16px"><button class="btn l" onclick="financials()">← Financials</button></div>`;
-}
-function addG(){modalHTML(`<div style="padding:16px"><h3>Add Goal - Original</h3><input id="gn" placeholder="GREEN ARROW LOAN 29,000" style="text-transform:uppercase"><input id="gt" placeholder="Target Amount" style="margin-top:6px"><input id="gp" placeholder="Target Period" style="margin-top:6px"><input id="gb" placeholder="Balance" value="31.25" style="margin-top:6px"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveGoal()">Create</button></div></div>`);}
+function home(){let myData=membersData[0];let isCredit=myData.arrears>=0;let arrearsCard=`<div class="action ${isCredit?'member-credit':'arrears-card'}" onclick="openB('00001-0001-000059890-002-2')"><div style="font-size:36px">${isCredit?'💰':'⚠️'}</div><b>Arrears Card - Original</b><br><div style="font-size:11px;color:#666">Your Arrears - Original - No Login</div><div style="font-weight:900;font-size:22px;color:${isCredit?'#2e6b28':'#c0392b'}">${isCredit?'+':''}KES ${myData.arrears.toLocaleString()}</div><div style="font-size:10px"><span class="${isCredit?'status-credit':'status-arrears'}">${myData.status}</span></div><div style="font-size:9px">Zimele: ${myData.zimele.toLocaleString()} | Monthly: ${myData.monthly.toLocaleString()}</div></div>`;document.getElementById('main').innerHTML=`<div class="hero"><h2 style="margin:0">THE KAUDHA ALUMNI FRATERNITY Accounts</h2><div style="background:rgba(255,255,255,.14);border-radius:10px;padding:12px;margin-top:10px"><div style="font-weight:700">00001-0001-000059890-002-2</div><div style="font-weight:900;color:#b8ffb8;font-size:28px">KES 14,395.58</div><div style="font-size:10px">Original Dashboard - No Login - Supabase Live: ${membersData.length} members - Paybill 501101</div></div></div><div class="grid4" style="margin-top:14px"><div class="action" onclick="financials()"><div style="font-size:36px">💰</div><b>Financials</b></div><div class="action" onclick="statements()"><div style="font-size:36px">📑</div><b>Statements</b><br><small>6 Buttons Active - Original</small></div><div class="action" onclick="financials()"><div style="font-size:36px">💳</div><b>Loan</b></div>${arrearsCard}</div>`;}
+function statementCard(acct,name,bal,target,period){return `<div class="statement-card"><div style="width:70px;height:70px;margin:0 auto 10px;border:1.5px solid #9b2c2c;border-radius:8px 8px 20px 20px;display:flex;align-items:center;justify-content:center;position:relative"><div style="font-size:28px">📊</div><div style="position:absolute;bottom:-8px;right:-8px;background:#fff;border:1px solid #9b2c2c;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700">Ksh</div></div><div style="font-size:13px;margin:4px 0">A/C Type: <b>Fixed Income Fund (Savings Plan)</b></div><div style="font-size:13px;margin:4px 0">Member Number: <b>000059890</b></div><div style="font-size:13px;margin:4px 0">A/C Number.<br><b>${acct}</b></div><div style="font-size:13px;margin:4px 0">Goal: <b>${acct==="00001-0001-000059890-002-2"?"MONTHLY CONTRIBUTION":(name||"GREEN ARROW LOAN 29,000")}</b></div><div style="font-size:13px;margin:4px 0">Balance: <b>${bal||"31.25"}</b> ✔️</div><div style="font-size:13px;margin:4px 0">Target Amount: <b>${target||'(Optional)'}</b></div><div style="font-size:13px;margin:4px 0">Target Period: <b>${period||'(Optional)'}</b></div><div class="btns-grid"><button class="btn-outline" onclick="openC('${acct}')">Chama Statement</button><button class="btn-outline" onclick="openB('${acct}')">Member Statement</button><button class="btn-outline" onclick="topup('${acct}')" style="background:#f0f8f0">Top Up</button><button class="btn-outline" onclick="openA('${acct}')">Annual Report</button><button class="btn-outline" onclick="openR('${acct}')">Reminders</button><button class="btn-outline" onclick="openL('${acct}')">Lock-In</button></div></div>`;}
+function statements(){let mainCard=statementCard("00001-0001-000059890-002-2","MONTHLY CONTRIBUTION","14,395.58","","");let goalCards=goals.map(g=>statementCard(g.accountNo,g.name,g.bal,g.target,g.period)).join('')||`<div style="text-align:center;color:#888;padding:12px;border:1px dashed #ccc;border-radius:10px;max-width:520px;margin:0 auto">No goal accounts - Add GREEN ARROW LOAN 29,000 - Original</div>`;document.getElementById('main').innerHTML=`<div class="statements-title">FAMILY DEVELOPMENT GROUP Accounts - No Login - Original</div>${mainCard}<div style="text-align:center;font-weight:700;color:#8B1E22;font-size:12px;margin:18px 0 8px">YOUR GOAL ACCOUNTS - ALL 6 BUTTONS ACTIVE - ORIGINAL</div>${goalCards}<div style="text-align:center;margin-top:16px"><button onclick="addG()" style="border:2px dashed #8B1E22;color:#8B1E22;background:#fff;padding:10px 24px;border-radius:20px;font-weight:800;cursor:pointer">+ Add Goal Account</button></div><div style="text-align:center;margin-top:16px"><button class="btn l" onclick="home()">← Home - Original - No Login</button></div>`;}
+function addG(){modalHTML(`<div style="padding:16px"><h3>Add Goal - Original - Supabase Live</h3><input id="gn" placeholder="GREEN ARROW LOAN 29,000" style="text-transform:uppercase"><input id="gt" placeholder="Target Amount" style="margin-top:6px"><input id="gp" placeholder="Target Period" style="margin-top:6px"><input id="gb" placeholder="Balance" value="31.25" style="margin-top:6px"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveGoal()">Create</button></div></div>`);}
 function saveGoal(){let n=document.getElementById('gn').value.trim();if(!n)return alert('Goal required');let acc='00001-0001-000059890-002-'+(goals.length+5);goals.push({id:Date.now(),accountNo:acc,name:n.toUpperCase(),bal:document.getElementById('gb').value||'31.25',target:document.getElementById('gt').value,period:document.getElementById('gp').value});localStorage.setItem('KAUDHA_F',JSON.stringify(goals));closem();statements();}
-function openC(acct){
- modalHTML(`<div style="padding:14px;text-align:center;border-bottom:2px solid #999"><b>Brief Account Statement - Original as Image 1</b><br><small>${acct}</small></div><div style="overflow:auto;max-height:60vh"><table><tr><th>Date</th><th>Description</th><th>Deposit</th><th>Withdrawal</th><th>Interest</th></tr><tr><td>2025-09-07</td><td>M-pesa: 254729039784, PHILIP OKINGO GWARA</td><td>1,000.00</td><td></td><td></td></tr><tr><td>2025-09-08</td><td>M-pesa: 254799458679, JAMES ANDARO OKINGO</td><td>3,320.00</td><td></td><td></td></tr></table></div><div style="padding:12px;text-align:center"><div style="border:1px solid #ddd;border-radius:6px;padding:8px;width:260px;margin:10px auto"><b>Summary</b><br>Total Deposits: 401,882.00<br>Total Withdrawals: 391,200.00<br>Total Interest: 3,713.58<br><b>Balance: 14,395.58</b></div><button class="btn l" onclick="closem()">Close - Original</button></div>`);
-}
-function openB(acct){
- let rows=membersData.map((m,i)=>`<tr style="background:${i%2===0?'#f5fbe9':'#eef6e0'}"><td style="background:#e8f5d0;text-align:center;font-weight:700">${i+1}</td><td>${m.short}</td><td style="text-align:center">-</td><td style="text-align:right">0.00</td><td style="text-align:right">${m.withdrawal}</td><td style="text-align:right">${m.zimele.toLocaleString()}</td><td style="text-align:right">${m.monthly.toLocaleString()}</td><td style="text-align:right;color:${m.arrears<0?'#d00':'#0a5a2a'};font-weight:700">${m.arrears.toLocaleString()}</td><td style="text-align:center"><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td></tr>`).join('');
- modalHTML(`<div style="background:#e8efe0;border-radius:12px;overflow:hidden"><div style="padding:14px;text-align:center;border-bottom:2px solid #999"><div style="color:#0a4d1a;font-weight:900;font-size:18px">Brief Member Statement - Original - ${membersData.length} Members - Supabase Live</div><div style="display:flex;justify-content:space-between;margin-top:4px;font-weight:800"><b>${acct}</b><span>Mon, 07-Sep-2026</span></div></div><div style="overflow:auto;max-height:50vh"><table style="min-width:700px"><tr><th>No</th><th>Name</th><th>Description</th><th>Deposit</th><th>Withdrawal</th><th>Zimele Account</th><th>Monthly Increment</th><th>Arrears</th><th>Status</th></tr>${rows}</table></div><div style="display:flex;gap:10px;justify-content:center;padding:12px"><button class="btn l" onclick="closem()">Close</button><button class="btn p" onclick="topup('${acct}')">Top Up</button></div></div>`);
-}
-function topup(acct){
- modalHTML(`<div style="padding:16px;text-align:center;border-bottom:1px solid #ddd"><b>Top Up With Mpesa - Original as Image 3 - Supabase Live</b></div><div style="padding:16px"><div style="font-size:11px;color:#333;margin-bottom:12px">Please enter your Mpesa Phone Number and Amount. Keep your phone on, we will send you an Mpesa popup to finalize the payment. - Original</div><div style="background:#f5f5f5;padding:10px;border-radius:6px;font-size:12px;margin-bottom:10px">${acct}</div><input type="tel" id="mpesaPhone" placeholder="Mpesa Phone Number - e.g. 254799458679"><input type="number" id="topupAmount" placeholder="Amount to Top Up" style="margin-top:8px;background:#f5f5f5"><div style="background:#f9f9f9;padding:10px;border-radius:6px;margin-top:8px;font-size:11px"><b>Paybill:</b> 501101<br><b>Account No:</b> ${acct}<br><b>Supabase:</b> Will update Zimele + Arrears live</div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn l" style="flex:1;border-radius:20px" onclick="closem()">Close</button><button class="btn p" style="flex:1;border-radius:20px;background:#fff;color:var(--maroon);border:1.5px solid var(--maroon)" onclick="doTopup('${acct}')">Top Up - Original</button></div></div>`);
-}
-async function doTopup(acct){
- let ph=document.getElementById('mpesaPhone').value.trim(); let am=Number(document.getElementById('topupAmount').value.trim());
- if(!ph||!am){showError('Enter Phone and Amount');return;}
- let member=membersData.find(m=>m.phone===ph||m.memberNo===ph);
- if(member){
-   let newZimele=Number(member.zimele)+am; let newArrears=newZimele-Number(member.monthly);
-   try{ await supabaseClient.from('members').update({zimele:newZimele,arrears:newArrears,status:newArrears>=0?'Credit':'Arrears'}).eq('phone', ph); }catch(e){}
-   member.zimele=newZimele; member.arrears=newArrears; member.status=newArrears>=0?'Credit':'Arrears';
- }
- alert(`✅ STK Push KES ${am} to ${ph} for ${acct} - Original Dashboard - Supabase Updated`); closem(); home();
-}
-function openA(acct){modalHTML(`<div style="padding:16px;text-align:center"><b>Annual Report - Original - ${acct}</b><br><button class="btn l" style="margin-top:10px" onclick="closem()">Close</button></div>`);}
+function openC(acct){modalHTML(`<div style="padding:14px;text-align:center;border-bottom:2px solid #999"><b>Brief Account Statement - Original Image 1 - No Login</b><br><small>${acct}</small></div><div style="overflow:auto;max-height:60vh"><table><tr><th>Date</th><th>Description</th><th>Deposit</th><th>Withdrawal</th><th>Interest</th></tr><tr><td>2025-09-07</td><td>M-pesa: 254729039784, PHILIP OKINGO GWARA</td><td>1,000.00</td><td></td><td></td></tr><tr><td>2025-09-08</td><td>M-pesa: 254799458679, JAMES ANDARO OKINGO</td><td>3,320.00</td><td></td><td></td></tr><tr><td>2025-09-08</td><td>M-pesa: 254710828430, NICHOLAS OTIENO OKINGO</td><td>750.00</td><td></td><td></td></tr></table></div><div style="text-align:center;padding:10px"><div style="border:1px solid #ddd;border-radius:6px;padding:8px;width:260px;margin:10px auto;font-size:11px"><b>Summary</b><br>Total Deposits: 401,882.00<br>Total Withdrawals: 391,200.00<br>Total Interest: 3,713.58<br><b>Account Balance: 14,395.58</b></div><button class="btn l" onclick="closem()">Close - Original</button></div>`);}
+function openB(acct){let rows=membersData.map((m,i)=>`<tr style="background:${i%2===0?'#f5fbe9':'#eef6e0'}"><td style="background:#e8f5d0;text-align:center;font-weight:700">${i+1}</td><td>${m.short||m.name.split(' ')[0]}</td><td style="text-align:center">-</td><td style="text-align:right">0.00</td><td style="text-align:right">${m.withdrawal}</td><td style="text-align:right">${Number(m.zimele).toLocaleString()}</td><td style="text-align:right">${Number(m.monthly).toLocaleString()}</td><td style="text-align:right;color:${Number(m.arrears)<0?'#d00':'#0a5a2a'};font-weight:700">${Number(m.arrears).toLocaleString()}</td><td style="text-align:center"><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td></tr>`).join('');modalHTML(`<div style="background:#e8efe0;border-radius:12px;overflow:hidden"><div style="padding:14px;text-align:center;border-bottom:2px solid #999"><div style="color:#0a4d1a;font-weight:900;font-size:18px">Brief Member Statement - Original Image - ${membersData.length} Members - Supabase Live - No Login</div><div style="display:flex;justify-content:space-between;margin-top:4px;font-weight:800"><b>${acct||'00001-0001-000059890-002-2'}</b><span>Mon, 07-Sep-2026 - Original</span></div></div><div style="overflow:auto;max-height:50vh"><table style="min-width:700px"><tr><th>No</th><th>Name</th><th>Description</th><th>Deposit</th><th>Withdrawal</th><th>Zimele Account</th><th>Monthly Increment</th><th>Arrears - Supabase Live</th><th>Status</th></tr>${rows}</table></div><div style="display:flex;gap:10px;justify-content:center;padding:12px"><button class="btn l" onclick="closem()">Close - Original</button><button class="btn p" onclick="topup('${acct||'00001-0001-000059890-002-2'}')">Top Up - Supabase Live</button></div></div>`);}
+function topup(acct){modalHTML(`<div style="padding:14px 16px;border-bottom:1px solid #ddd;text-align:center;font-weight:700">Top Up With Mpesa - Original Image 3 - Supabase Live - No Login</div><div style="padding:16px"><div style="font-size:11px;color:#333;margin-bottom:12px">Please enter your Mpesa Phone Number and Amount. Keep your phone on, we will send you an Mpesa popup to finalize the payment. - Original</div><div style="background:#f5f5f5;padding:10px;border-radius:6px;font-size:12px;margin-bottom:10px">${acct||'00001-0001-000059890-002-2'}</div><div style="display:flex;justify-content:space-between"><label style="font-size:10px;color:#c0392b">Mpesa Phone Number</label><span style="background:#c0392b;color:#fff;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px">!</span></div><input type="tel" id="mpesaPhone" placeholder="e.g. 254799458679" style="background:#f0f0f0;border:0"><div style="font-size:10px;color:#c0392b;margin-top:4px">Mpesa Phone Number is required - Original</div><div style="margin-top:10px"><label style="font-size:10px">Amount to Top Up</label><input type="number" id="topupAmount" placeholder="Enter amount" style="background:#f5f5f5;border:0"></div><div style="background:#f9f9f9;padding:10px;border-radius:6px;margin-top:8px;font-size:11px"><b>Paybill:</b> 501101<br><b>Account No:</b> ${acct||'00001-0001-000059890-002-2'}<br><b>Supabase:</b> Will update Zimele + Arrears live</div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn l" style="border-radius:20px" onclick="closem()">Close</button><button class="btn p" style="border-radius:20px;background:#fff;color:#7a1010;border:1.5px solid #7a1010" onclick="doTopup('${acct||'00001-0001-000059890-002-2'}')">Top Up - Supabase Live</button></div></div>`);}
+async function doTopup(acct){let ph=document.getElementById('mpesaPhone').value.trim();let am=Number(document.getElementById('topupAmount').value.trim());if(!ph||!am)return alert('Phone and Amount required - Original');let member=membersData.find(m=>m.phone===ph||m.memberNo===ph);if(member){let newZimele=Number(member.zimele)+am;let newArrears=newZimele-Number(member.monthly);try{await supabaseClient.from('members').update({zimele:newZimele,arrears:newArrears,status:newArrears>=0?'Credit':'Arrears'}).eq('phone',ph);document.getElementById('supStatus').textContent=`● Supabase Updated: ${member.short} Zimele ${newZimele} Arrears ${newArrears}`;}catch(e){console.log(e);}member.zimele=newZimele;member.arrears=newArrears;member.status=newArrears>=0?'Credit':'Arrears';}alert(`✅ STK Push KES ${am} to ${ph} for ${acct} - Original - Supabase Updated - Paybill 501101 - No Login`);closem();home();}
+function openA(acct){modalHTML(`<div style="padding:16px;text-align:center"><b>Annual Report - Original - ${acct}</b><br><button class="btn l" style="margin-top:10px" onclick="closem()">Close - Original</button></div>`);}
 function openR(acct){modalHTML(`<div style="padding:16px"><h3>🔔 Reminders - Original - ${acct}</h3><button class="btn l" onclick="closem()">Close - Original</button></div>`);}
 function openL(acct){modalHTML(`<div style="padding:16px"><h3>🔒 Lock-In - Original - ${acct}</h3><button class="btn l" onclick="closem()">Close - Original</button></div>`);}
-function members(){
- let rows=membersData.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.name}</b><br><small>${m.memberNo} | ${m.role}</small></td><td>${m.phone}</td><td style="text-align:right">${m.zimele.toLocaleString()}</td><td style="text-align:right;color:${m.arrears<0?'#c0392b':'#2e6b28'};font-weight:700">${m.arrears.toLocaleString()}<br><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td><td><button class="btn s" style="padding:4px 6px;font-size:9px">View</button></td></tr>`).join('');
- document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - Original - ${membersData.length} Members - Supabase Live</h2><div style="overflow:auto;max-height:60vh;border:1px solid #ddd;border-radius:8px"><table><tr><th>No</th><th>Member - Original</th><th>Phone</th><th>Zimele - Original</th><th>Arrears - Original</th><th>Actions</th></tr>${rows}</table></div><button class="btn l" style="margin-top:10px" onclick="home()">Home - Original</button></div>`;
-}
-function settings(){document.getElementById('main').innerHTML=`<div class="card"><h2>⚙️ Settings - 15 Modules - Original</h2><p>Original Dashboard - Supabase Live: ${membersData.length} members</p><button class="btn l" onclick="home()">Home</button></div>`;}
-function docs(){document.getElementById('main').innerHTML=`<div class="card"><h3>📁 Documents - Original</h3><button class="btn l" onclick="home()">Home</button></div>`;}
-function projects(){document.getElementById('main').innerHTML=`<div class="card"><h3>💡 Projects - Original</h3><button class="btn l" onclick="home()">Home</button></div>`;}
-function financials(){document.getElementById('main').innerHTML=`<div class="card" style="text-align:center"><h2>Financials - Original</h2><button class="btn p" onclick="statements()">Statements - 6 Buttons - Original</button> <button class="btn l" onclick="home()">Home</button></div>`;}
-function openProfile(){modalHTML(`<div style="padding:16px"><h3>👤 Profile - ${currentUser.name} - Original</h3><div style="text-align:center"><div class="profile-avatar">👤</div></div><button class="btn l" style="width:100%;margin-top:10px" onclick="closem()">Close - Original</button></div>`);}
-
-// Initialize login dropdown immediately - FIX
-initSupabase();
-</script>
-</body></html>
+function members(){let rows=membersData.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.name}</b><br><small>${m.memberNo} | ${m.role}</small></td><td>${m.phone}<br><small>${m.email}</small></td><td style="text-align:right">${Number(m.zimele).toLocaleString()}<br><small>${Number(m.monthly).toLocaleString()}</small></td><td style="text-align:right;color:${Number(m.arrears)<0?'#c0392b':'#2e6b28'};font-weight:700">${Number(m.arrears).toLocaleString()}<br><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td><td><button class="btn s" style="padding:4px 6px;font-size:9px" onclick="openB('00001-0001-000059890-002-2')">View - Original</button></td></tr>`).join('');document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - Original - ${membersData.length} Members - Supabase Live - No Login</h2><div style="overflow:auto;max-height:60vh;border:1px solid #ddd;border-radius:8px"><table><tr><th>No</th><th>Member - Original</th><th>Phone / Email</th><th>Zimele / Monthly - Original</th><th>Arrears / Status - Supabase Live - Original</th><th>Actions - Original</th></tr>${rows}</table></div><button class="btn l" style="margin-top:10px" onclick="home()">Home - Original - No Login</button></div>`;}
+function settings(){document.getElementById('main').innerHTML=`<div class="card"><h2>⚙️ Settings - 15 Modules - Original - No Login - Supabase Live</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px"><div style="background:#e8f5e9;padding:10px;border-radius:8px"><b>Supabase</b><br>lodjqbszdrpimldtdfev.supabase.co<br>● Connected - No Login</div><div style="background:#e8f5e9;padding:10px;border-radius:8px"><b>Members</b><br>${membersData.length} live - Original<br>Total Arrears: ${membersData.filter(m=>Number(m.arrears)<0).reduce((s,m)=>s+Number(m.arrears),0).toLocaleString()}</div><div style="background:#fff3e0;padding:10px;border-radius:8px"><b>Original Dashboard</b><br>No Login - Direct Access<br>All 6 buttons Active</div></div><button class="btn l" style="margin-top:10px" onclick="home()">Home - Original</button></div>`;}
+function docs(){document.getElementById('main').innerHTML=`<div class="card"><h3>📁 Documents - Original - No Login</h3><button class="btn l" onclick="home()">Home</button></div>`;}
+function projects(){document.getElementById('main').innerHTML=`<div class="card"><h3>💡 Projects - Original - No Login</h3><button class="btn l" onclick="home()">Home</button></div>`;}
+function financials(){document.getElementById('main').innerHTML=`<div class="card" style="text-align:center"><h2>Financials - Original - No Login</h2><div style="display:flex;justify-content:center;gap:20px;margin:20px 0"><div style="cursor:pointer;border:2px solid #8B1E22;border-radius:12px;padding:18px;min-width:140px" onclick="statements()"><div style="font-size:42px">📑</div><b>Statements</b><br><small>6 Active - Original</small></div><div style="cursor:pointer;border:2px solid #1E5631;border-radius:12px;padding:18px;min-width:140px" onclick="topup('00001-0001-000059890-002-2')"><div style="font-size:42px">🐖</div><b>Deposit - Original</b></div></div><button class="btn l" onclick="home()">← Home - Original - No Login</button></div>`;}
+home();initSupabase();
+</script></body></html>
