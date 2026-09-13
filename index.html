@@ -1,138 +1,58 @@
-// Initialize Supabase Client
-const SUPABASE_URL = "YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+-- STEP 1: First add missing columns (run this alone first)
+ALTER TABLE members ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id);
+ALTER TABLE members ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES auth.users(id);
+ALTER TABLE members ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active';
 
-let currentUserProfile = null;
+-- STEP 2: Clean old policies (run this second)
+DROP POLICY IF EXISTS "Allow read settings" ON app_settings;
+DROP POLICY IF EXISTS "Users read own profile" ON profiles;
+DROP POLICY IF EXISTS "Admin read all profiles" ON profiles;
+DROP POLICY IF EXISTS "Dynamic member access" ON members;
+DROP POLICY IF EXISTS "Insert member" ON members;
+DROP POLICY IF EXISTS "Delete member" ON members;
+DROP POLICY IF EXISTS "Users see own" ON members;
+DROP POLICY IF EXISTS "Admin sees all" ON members;
 
-// Initialize app data on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    await fetchDynamicSettings();
-    await initializeAuthSession();
-    await loadMembersData();
-});
+-- STEP 3: Simple policies with NO recursion
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow read settings" ON app_settings FOR SELECT USING (true);
 
-// Fetch dynamic settings from Supabase
-async function fetchDynamicSettings() {
-    const { data: settings, error } = await supabase.from('app_settings').select('*');
-    if (error) return console.error('Error fetching settings:', error);
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own profile" ON profiles FOR SELECT USING (id = auth.uid());
 
-    settings.forEach(setting => {
-        if (setting.key === 'app_title') {
-            const titleElem = document.getElementById('app-title') || document.querySelector('header h1');
-            if (titleElem) titleElem.innerText = setting.value;
-        }
-        if (setting.key === 'portal_notice') {
-            const noticeElem = document.getElementById('portal-notice');
-            if (noticeElem) noticeElem.innerText = setting.value;
-        }
-    });
-}
+ALTER TABLE members ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Enable all for authenticated" ON members FOR ALL USING (auth.role() = 'authenticated');
 
-// Manage user session & evaluate role permissions dynamically
-async function initializeAuthSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+-- STEP 4: Now create functions AFTER policies
+DROP FUNCTION IF EXISTS get_dynamic_dashboard();
+CREATE OR REPLACE FUNCTION get_dynamic_dashboard()
+RETURNS JSON AS $$
+DECLARE
+  result JSON;
+BEGIN
+  SELECT json_build_object(
+    'settings', (SELECT COALESCE(json_agg(row_to_json(s)), '[]'::json) FROM (SELECT key, value FROM app_settings) s),
+    'profile', (SELECT row_to_json(p) FROM (SELECT id, role FROM profiles WHERE id = auth.uid()) p),
+    'members', (SELECT COALESCE(json_agg(row_to_json(m)), '[]'::json) FROM (SELECT * FROM members ORDER BY created_at DESC LIMIT 100) m)
+  ) INTO result;
+  RETURN result;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-    // Retrieve full profile and dynamic role assignment from database
-    const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
-
-    if (error || !profile) return;
-    currentUserProfile = profile;
-
-    // Dynamic UI role evaluation
-    applyRoleBasedUI(profile.role);
-}
-
-// Dynamic display handling according to database role
-function applyRoleBasedUI(role) {
-    const adminElements = document.querySelectorAll('.admin-only, [data-role="admin"]');
-    const officialElements = document.querySelectorAll('.official-only, [data-role="official"]');
-
-    adminElements.forEach(el => el.style.display = (role === 'admin') ? '' : 'none');
-    officialElements.forEach(el => el.style.display = (role === 'admin' || role === 'official') ? '' : 'none');
-}
-
-// Fetch member table entries dynamically from database
-async function loadMembersData() {
-    const tableBody = document.getElementById('members-table-body') || document.querySelector('tbody');
-    if (!tableBody) return;
-
-    const { data: members, error } = await supabase
-        .from('members')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-    if (error) {
-        console.error("Error loading members:", error);
-        return;
-    }
-
-    tableBody.innerHTML = '';
-    members.forEach(member => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${member.membership_number}</td>
-            <td>${member.full_name}</td>
-            <td>${member.email}</td>
-            <td>${member.phone || 'N/A'}</td>
-            <td><span class="badge ${member.status.toLowerCase()}">${member.status}</span></td>
-            <td class="admin-only">
-                <button onclick="deleteMember('${member.id}')">Delete</button>
-            </td>
-        `;
-        tableBody.appendChild(tr);
-    });
-
-    // Re-apply role visibility to dynamically added action buttons
-    if (currentUserProfile) {
-        applyRoleBasedUI(currentUserProfile.role);
-    }
-}
-
-// Dynamically insert member record (replaces local array pushes)
-async function handleAddMember(event) {
-    if (event) event.preventDefault();
-    
-    const name = document.getElementById('member-name').value;
-    const email = document.getElementById('member-email').value;
-    const phone = document.getElementById('member-phone').value;
-    const memNo = document.getElementById('member-no').value;
-
-    const { data, error } = await supabase
-        .from('members')
-        .insert([{ 
-            full_name: name, 
-            email: email, 
-            phone: phone, 
-            membership_number: memNo 
-        }]);
-
-    if (error) {
-        alert("Failed to create member: " + error.message);
-    } else {
-        await loadMembersData();
-        // Close modal using existing modal function if present
-        if (typeof closeModal === 'function') closeModal();
-    }
-}
-
-// Dynamically remove member record
-async function deleteMember(id) {
-    if (!confirm("Are you sure you want to delete this record?")) return;
-
-    const { error } = await supabase
-        .from('members')
-        .delete()
-        .eq('id', id);
-
-    if (error) {
-        alert("Failed to delete member: " + error.message);
-    } else {
-        await loadMembersData();
-    }
-}
+DROP FUNCTION IF EXISTS create_member_dynamic(TEXT,TEXT,TEXT,TEXT);
+CREATE OR REPLACE FUNCTION create_member_dynamic(
+  p_full_name TEXT,
+  p_email TEXT,
+  p_phone TEXT,
+  p_membership_number TEXT
+)
+RETURNS JSON AS $$
+DECLARE
+  new_member JSON;
+BEGIN
+  INSERT INTO members (full_name, email, phone, membership_number, user_id)
+  VALUES (p_full_name, p_email, p_phone, p_membership_number, auth.uid())
+  RETURNING row_to_json(members.*) INTO new_member;
+  RETURN new_member;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
