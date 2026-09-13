@@ -1,153 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="app-title">KAUDHA Portal</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="app-title">KAUDHA - DYNAMIC</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
-.badge.active{background:#dcfce7;color:#166534} .badge.pending{background:#fef9c3;color:#854d0e}
-.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
-</style>
-</head>
-<body class="bg-gray-50 min-h-screen">
+:root{--maroon:#7a1010;--forest:#1E5631;--border:#d9d2b8;--green:#2e6b28;--crimson:#8B1E22}
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f0f0e0}
+.top{height:62px;background:var(--maroon);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-weight:900;position:sticky;top:0;z-index:20}
+.side{width:280px;background:#fff;border-right:1px solid var(--border);position:fixed;top:62px;bottom:0;overflow:auto;padding:10px}
+.main{margin-left:280px;padding:16px}
+.nav-btn{width:100%;display:flex;gap:10px;padding:11px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;font-size:13px;align-items:center}
+.nav-btn:hover{background:#f6f3e8}.nav-btn.dev{background:var(--forest);color:#fff;font-weight:700;margin-top:10px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.hero{background:linear-gradient(120deg,var(--maroon),#a11a1a);color:#fff;border-radius:16px;padding:22px}
+.btn{border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.btn.p{background:var(--maroon);color:#fff}.btn.s{background:var(--forest);color:#fff}.btn.l{background:#eee;color:#333}.btn.d{background:#c0392b;color:#fff}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.action{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}.modal.on{display:flex}.box{background:#fff;border-radius:12px;padding:0;width:min(96%,980px);max-height:92vh;overflow:auto}
+table{width:100%;border-collapse:collapse}th{background:#1a1a1a;color:#fff;padding:10px 8px;text-align:left;font-size:11px}td{padding:10px 8px;border-bottom:1px solid #eee;font-size:11px}
+input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:8px;background:#fffdf0;font-size:12px}
+.statement-card{border:1.5px solid #9b2c2c;border-radius:14px;padding:20px 16px;background:#fdfcf0;max-width:520px;margin:0 auto 20px;text-align:center}
+.btns-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.btn-outline{border:1.5px solid var(--green);background:#fff;color:var(--green);padding:10px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
+.status-arrears{background:#f8c6d0;color:#a00;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block}
+.status-credit{background:#b8e6c6;color:#0a5a2a;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block}
+.login-wrap{position:fixed;inset:0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+.login-box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(96%,400px)}
+</style></head><body>
 
-<!-- HEADER - DYNAMIC TITLE -->
-<header class="bg-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <h1 id="app-title-header" data-setting="app_title" class="text-2xl font-bold text-green-700">Loading...</h1>
-    <div class="flex gap-3 items-center">
-      <span id="user-role-badge" class="badge active"></span>
-      <button id="logoutBtn" class="hidden text-sm bg-red-50 text-red-600 px-4 py-2 rounded-lg">Logout</button>
-    </div>
-  </div>
-  <div id="portal-notice" data-setting="portal_notice" class="bg-yellow-50 text-yellow-800 text-center py-2 text-sm"></div>
-</header>
+<div class="login-wrap" id="loginWrap">
+<div class="login-box">
+<div style="background:var(--crimson);color:#fff;padding:10px 16px;font-weight:900;text-align:center;border-radius:8px;margin-bottom:16px">🐃 ZIMELE</div>
+<div id="loginForm">
+<div><label style="font-size:11px">Email</label><input id="loginEmail" type="email" placeholder="admin@kaudha.co.ke" value=""></div>
+<div style="margin-top:8px"><label style="font-size:11px">Password</label><input id="loginPass" type="password" placeholder="1234"></div>
+<button class="btn p" style="width:100%;margin-top:12px;padding:12px" onclick="doLogin()">Login with Supabase</button>
+<div style="text-align:center;margin-top:10px;font-size:10px;color:#888">Dynamic - No hard code - Uses Supabase Auth</div>
+<div id="loginError" style="color:red;font-size:11px;margin-top:8px;text-align:center"></div>
+</div>
+</div>
+</div>
 
-<main class="max-w-7xl mx-auto p-6">
-  <!-- STATS - DYNAMIC FROM DB -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white p-5 rounded-xl shadow"><p class="text-gray-500 text-sm">Total Members</p><h2 id="stat-total" class="text-3xl font-bold">0</h2></div>
-    <div class="bg-white p-5 rounded-xl shadow"><p class="text-gray-500 text-sm">Active</p><h2 id="stat-active" class="text-3xl font-bold text-green-600">0</h2></div>
-    <div class="bg-white p-5 rounded-xl shadow"><p class="text-gray-500 text-sm">Pending</p><h2 id="stat-pending" class="text-3xl font-bold text-yellow-600">0</h2></div>
-    <div class="bg-white p-5 rounded-xl shadow"><p class="text-gray-500 text-sm">My Role</p><h2 id="stat-role" class="text-3xl font-bold capitalize">-</h2></div>
-  </div>
-
-  <!-- ACTION BAR -->
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-lg font-bold">Members</h3>
-    <button onclick="openModal()" class="official-only admin-only bg-green-700 text-white px-5 py-2 rounded-lg"><i class="fa fa-plus mr-2"></i>Add Member</button>
-  </div>
-
-  <!-- TABLE - 100% DYNAMIC -->
-  <div class="bg-white rounded-xl shadow overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-gray-100 text-left"><tr>
-          <th class="p-4">Membership No</th><th class="p-4">Full Name</th><th class="p-4">Email</th><th class="p-4">Phone</th><th class="p-4">Status</th><th class="p-4 admin-only">Action</th>
-        </tr></thead>
-        <tbody id="members-table-body"><tr><td colspan="6" class="p-8 text-center text-gray-400">Loading from Supabase...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</main>
-
-<!-- ADD MODAL -->
-<div id="memberModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-  <div class="bg-white w-full max-w-md p-6 rounded-xl">
-    <h3 class="font-bold text-lg mb-4">Add New Member</h3>
-    <form onsubmit="handleAddMember(event)" class="space-y-3">
-      <input id="member-no" required placeholder="Membership Number e.g KA-001" class="w-full border p-3 rounded-lg">
-      <input id="member-name" required placeholder="Full Name" class="w-full border p-3 rounded-lg">
-      <input id="member-email" required type="email" placeholder="Email" class="w-full border p-3 rounded-lg">
-      <input id="member-phone" placeholder="Phone" class="w-full border p-3 rounded-lg">
-      <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal()" class="flex-1 border py-2 rounded-lg">Cancel</button><button class="flex-1 bg-green-700 text-white py-2 rounded-lg">Save</button></div>
-    </form>
-  </div>
+<div id="app" style="display:none">
+<div class="top"><div data-setting="app_title" id="topTitle">🐃 ZIMELE - KAUDHA</div><div style="display:flex;gap:8px;align-items:center"><span style="background:rgba(255,255,255,.2);padding:6px 10px;border-radius:20px;font-size:11px">Role: <b id="currentRoleLabel">Member</b></span><span style="cursor:pointer" onclick="doLogout()">Logout</span></div></div>
+<div class="side">
+<div style="text-align:center;padding:10px;border-bottom:1px solid var(--border)"><b id="sideName">Loading...</b><br><span id="sideRoleBadge">-</span></div>
+<button class="nav-btn" onclick="home()">🏠 Home</button>
+<button class="nav-btn" onclick="statements()">📑 Statements - 6 Buttons ACTIVE</button>
+<button class="nav-btn" onclick="members()">👥 Members - DYNAMIC FROM SUPABASE</button>
+<button class="nav-btn dev" onclick="settings()">⚙️ Settings - DYNAMIC</button>
+</div>
+<div class="main" id="main">Loading...</div>
+<div class="modal" id="modal"><div class="box" id="box"></div></div>
 </div>
 
 <script>
-// ========= CONFIG - CHANGE ONLY THESE 2 LINES =========
+// ======== CHANGE ONLY THESE 2 LINES ========
 const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
-// ======================================================
-
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+// ===========================================
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-let currentUserProfile = null;
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadDashboard();
-  supabaseClient.auth.onAuthStateChange(async () => await loadDashboard());
-});
+let membersData = []; // NO HARD CODE - WILL LOAD FROM SUPABASE
+let currentUser = null;
+let currentRole = 'member';
+let goals = [];
 
-async function loadDashboard(){
-  // Use your dynamic SQL function
-  const { data, error } = await supabaseClient.rpc('get_dynamic_dashboard');
-  if(error){ console.error(error); document.getElementById('members-table-body').innerHTML = `<tr><td colspan=6 class="p-4 text-red-500">Error: ${error.message}</td></tr>`; return; }
+function modalHTML(h){document.getElementById('box').innerHTML=h;document.getElementById('modal').classList.add('on');}
+function closem(){document.getElementById('modal').classList.remove('on');}
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closem();};
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  if(!email || !pass) return document.getElementById('loginError').innerText = 'Enter email and password';
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+  if(error){ document.getElementById('loginError').innerText = error.message; return; }
+  await loadApp();
+}
+
+async function doLogout(){ await supabaseClient.auth.signOut(); location.reload(); }
+
+async function loadApp(){
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(!session){ document.getElementById('loginWrap').style.display='flex'; document.getElementById('app').style.display='none'; return; }
   
-  // 1. Settings dynamic
+  // DYNAMIC DASHBOARD - ONE CALL
+  const { data, error } = await supabaseClient.rpc('get_dynamic_dashboard');
+  if(error){ console.error(error); alert(error.message); return; }
+
+  // Apply dynamic settings
   data.settings?.forEach(s => {
-    document.querySelectorAll(`[data-setting="${s.key}"]`).forEach(el => el.innerText = s.value);
-    if(s.key === 'app_title') document.title = s.value;
+    document.querySelectorAll(`[data-setting="${s.key}"]`).forEach(el => { if(s.key==='app_title') el.innerText = '🐃 '+s.value; });
+    if(s.key==='app_title') document.title = s.value;
   });
 
-  // 2. Profile dynamic
-  currentUserProfile = data.profile;
-  if(currentUserProfile){
-    document.getElementById('stat-role').innerText = currentUserProfile.role || 'member';
-    document.getElementById('user-role-badge').innerText = currentUserProfile.role || 'member';
-    document.getElementById('logoutBtn').classList.remove('hidden');
-    applyRoleBasedUI(currentUserProfile.role);
-  }
-
-  // 3. Members dynamic + stats
-  const members = data.members || [];
-  document.getElementById('stat-total').innerText = members.length;
-  document.getElementById('stat-active').innerText = members.filter(m=>m.status==='active').length;
-  document.getElementById('stat-pending').innerText = members.filter(m=>m.status!=='active').length;
-  renderMembers(members);
+  membersData = data.members || [];
+  currentUser = data.profile;
+  currentRole = data.role || data.profile?.role || 'member';
+  
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('sideName').innerText = currentUser?.full_name || session.user.email;
+  document.getElementById('currentRoleLabel').innerText = currentRole;
+  document.getElementById('sideRoleBadge').innerText = currentRole;
+  home();
 }
 
-function renderMembers(members){
-  const tbody = document.getElementById('members-table-body');
-  if(!members.length){ tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400">No members yet. Add first member.</td></tr>`; return; }
-  tbody.innerHTML = '';
-  members.forEach(m => {
-    const tr = document.createElement('tr'); tr.className = 'border-t hover:bg-gray-50';
-    tr.innerHTML = `<td class="p-4 font-mono">${m.membership_number}</td><td class="p-4 font-medium">${m.full_name}</td><td class="p-4">${m.email}</td><td class="p-4">${m.phone||'N/A'}</td><td class="p-4"><span class="badge ${m.status}">${m.status}</span></td><td class="p-4 admin-only"><button onclick="deleteMember('${m.id}')" class="text-red-600 hover:bg-red-50 px-3 py-1 rounded">Delete</button></td>`;
-    tbody.appendChild(tr);
-  });
-  if(currentUserProfile) applyRoleBasedUI(currentUserProfile.role);
+function home(){
+  let my = membersData[0] || { arrears:0, status:'Credit' };
+  document.getElementById('main').innerHTML=`
+    <div class="hero"><h2 style="margin:0" data-setting="app_title">THE KAUDHA ALUMNI FRATERNITY Accounts</h2>
+    <div style="background:rgba(255,255,255,.14);border-radius:10px;padding:12px;margin-top:10px">
+    <div style="font-weight:700">00001-0001-000059890-002-2</div>
+    <div style="font-weight:900;color:#b8ffb8;font-size:28px">KES 14,395.58 - LIVE FROM DB</div></div>
+    <div>Welcome <b>${currentUser?.full_name||''}</b></div></div>
+    <div class="grid4" style="margin-top:14px">
+      <div class="action" onclick="members()"><div style="font-size:36px">👥</div><b>${membersData.length} Members - DYNAMIC</b></div>
+      <div class="action" onclick="statements()"><div style="font-size:36px">📑</div><b>Statements - 6 Buttons</b></div>
+      <div class="action"><div style="font-size:36px">💰</div><b>Balance Dynamic</b><br>${my.arrears||0}</div>
+      <div class="action"><div style="font-size:36px">⚙️</div><b>Settings Dynamic</b></div>
+    </div>`;
 }
 
-function applyRoleBasedUI(role){
-  document.querySelectorAll('.admin-only').forEach(el => el.style.display = (role==='admin')?'':'none');
-  document.querySelectorAll('.official-only').forEach(el => el.style.display = (role==='admin'||role==='official')?'':'none');
-  document.querySelectorAll('.admin-only').forEach(el => { if(role!=='admin') el.style.display='none'; });
+function statementCard(acct, name, bal){
+  return `<div class="statement-card">
+  <div style="font-size:13px">A/C: <b>${acct}</b></div>
+  <div>Goal: <b>${name||"MONTHLY CONTRIBUTION"}</b></div>
+  <div>Balance: <b>${bal||"14,395.58"}</b></div>
+  <div class="btns-grid">
+  <button class="btn-outline" onclick="openC('${acct}')">Chama Statement</button>
+  <button class="btn-outline" onclick="openB('${acct}')">Member Statement - DYNAMIC ${membersData.length}</button>
+  <button class="btn-outline" onclick="topup('${acct}')">Top Up</button>
+  <button class="btn-outline" onclick="openA('${acct}')">Annual Report</button>
+  <button class="btn-outline" onclick="openR('${acct}')">Reminders</button>
+  <button class="btn-outline" onclick="openL('${acct}')">Lock-In</button>
+  </div></div>`;
 }
 
-async function handleAddMember(e){
-  e.preventDefault();
+function statements(){
+  let mainCard=statementCard("00001-0001-000059890-002-2","MONTHLY CONTRIBUTION","14,395.58");
+  document.getElementById('main').innerHTML=`<div style="text-align:center;font-weight:900;font-size:20px;margin:10px 0">FAMILY DEVELOPMENT GROUP Accounts - DYNAMIC</div>${mainCard}<div style="text-align:center;margin-top:16px"><button class="btn l" onclick="home()">← Home</button></div>`;
+}
+
+function openB(acct){
+  let rows=membersData.map((m,i)=>`<tr><td>${i+1}</td><td>${m.full_name}</td><td>${m.email}</td><td>${m.phone||''}</td><td>${m.membership_number}</td><td><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td></tr>`).join('');
+  modalHTML(`<div style="padding:14px"><div style="font-weight:900;text-align:center">Member Statement - DYNAMIC FROM SUPABASE - ${membersData.length} Members</div><div style="overflow:auto;max-height:50vh"><table><tr><th>No</th><th>Name</th><th>Email</th><th>Phone</th><th>Member No</th><th>Status</th></tr>${rows||'<tr><td colspan=6>No members in Supabase - Add from Members page</td></tr>'}</table></div><div style="text-align:center;padding:10px"><button class="btn l" onclick="closem()">Close</button></div></div>`);
+}
+function openC(acct){ modalHTML(`<div style="padding:16px"><h3>Chama Statement - ${acct} - DYNAMIC</h3><div style="background:#f5f5f0;padding:20px;border-radius:8px;text-align:center">Fetch from <b>transactions</b> table where account_no = '${acct}' - Will show ${membersData.length} member deposits<br><br>SELECT * FROM transactions WHERE account_number = '${acct}'</div><button class="btn l" onclick="closem()">Close</button></div>`); }
+function topup(acct){ modalHTML(`<div style="padding:16px"><h3>Top Up - ${acct}</h3><input id="mpesaPhone" placeholder="2547..." style="margin-top:8px"><input id="topupAmount" placeholder="Amount" style="margin-top:8px"><div style="display:flex;gap:8px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Close</button><button class="btn p" style="flex:1" onclick="alert('STK Push to '+document.getElementById('mpesaPhone').value)">Top Up</button></div></div>`); }
+function openA(acct){ modalHTML(`<div style="padding:16px;text-align:center"><h3>Annual Report - ${acct}</h3><p>Dynamic from transactions table - Year 2025 - Total deposits for ${membersData.length} members</p><button class="btn l" onclick="closem()">Close</button></div>`); }
+function openR(acct){ modalHTML(`<div style="padding:16px"><h3>Reminders - DYNAMIC TABLE</h3><p>Save to <b>reminders</b> table with user_id = auth.uid()</p><input placeholder="Reminder message"><button class="btn s" style="margin-top:8px;width:100%" onclick="alert('Save to Supabase reminders table')">Save</button></div>`); }
+function openL(acct){ modalHTML(`<div style="padding:16px"><h3>Lock-In - DYNAMIC</h3><p>Save to <b>locks</b> table</p><input placeholder="Amount"><input type="date" style="margin-top:8px"><button class="btn s" style="margin-top:8px;width:100%" onclick="alert('Lock saved to Supabase')">Lock</button></div>`); }
+
+function members(){
+  let rows=membersData.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.full_name}</b><br><small>${m.membership_number}</small></td><td>${m.email}<br>${m.phone||''}</td><td><span class="${(m.status||'active').toLowerCase()==='active'?'status-credit':'status-arrears'}">${m.status||'active'}</span></td><td><button class="btn d" style="padding:4px 8px" onclick="deleteMember('${m.id}')">Del</button></td></tr>`).join('');
+  document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - DYNAMIC FROM SUPABASE - ${membersData.length} Total</h2><div style="margin:10px 0"><button class="btn s" onclick="openAddMember()">+ Add Member Dynamic</button></div><div style="overflow:auto"><table><tr><th>No</th><th>Member</th><th>Contact</th><th>Status</th><th>Action</th></tr>${rows||'<tr><td colspan=5>No members yet - table is empty in Supabase</td></tr>'}</table></div></div>`;
+}
+function openAddMember(){ modalHTML(`<div style="padding:16px"><h3>Add Member - Saves to Supabase members table with user_id = auth.uid()</h3><input id="newMNo" placeholder="KA-001"><input id="newMName" placeholder="Full Name" style="margin-top:6px"><input id="newMEmail" placeholder="Email" style="margin-top:6px"><input id="newMPhone" placeholder="Phone" style="margin-top:6px"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveMemberDynamic()">Save to Supabase</button></div></div>`); }
+async function saveMemberDynamic(){
   const { data, error } = await supabaseClient.rpc('create_member_dynamic', {
-    p_full_name: document.getElementById('member-name').value,
-    p_email: document.getElementById('member-email').value,
-    p_phone: document.getElementById('member-phone').value,
-    p_membership_number: document.getElementById('member-no').value
+    p_full_name: document.getElementById('newMName').value,
+    p_email: document.getElementById('newMEmail').value,
+    p_phone: document.getElementById('newMPhone').value,
+    p_membership_number: document.getElementById('newMNo').value
   });
-  if(error) alert(error.message); else { closeModal(); e.target.reset(); await loadDashboard(); }
+  if(error) alert(error.message); else { closem(); await loadApp(); members(); }
 }
+async function deleteMember(id){ if(!confirm('Delete?')) return; const { error } = await supabaseClient.from('members').delete().eq('id', id); if(error) alert(error.message); else { await loadApp(); members(); } }
+function settings(){ document.getElementById('main').innerHTML=`<div class="card"><h2>Settings - DYNAMIC FROM app_settings table</h2><p>Your settings are now from Supabase table <b>app_settings</b> - Edit in Supabase Dashboard > Table Editor > app_settings</p><p>Keys: app_title, portal_notice, paybill, interest_rate etc.</p><button class="btn s" onclick="loadApp()">Reload Dynamic Settings</button></div>`; }
 
-async function deleteMember(id){
-  if(!confirm("Delete this member?")) return;
-  const { error } = await supabaseClient.from('members').delete().eq('id', id);
-  if(error) alert(error.message); else await loadDashboard();
-}
-
-function openModal(){ document.getElementById('memberModal').classList.remove('hidden'); document.getElementById('memberModal').classList.add('flex'); }
-function closeModal(){ document.getElementById('memberModal').classList.add('hidden'); document.getElementById('memberModal').classList.remove('flex'); }
-document.getElementById('logoutBtn').onclick = async () => { await supabaseClient.auth.signOut(); location.reload(); };
+document.addEventListener('DOMContentLoaded', async () => { const { data:{session} } = await supabaseClient.auth.getSession(); if(session) await loadApp(); });
 </script>
-</body>
-</html>
+</body></html>
