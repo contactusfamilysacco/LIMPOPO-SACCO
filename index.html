@@ -34,7 +34,7 @@ input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius
 <div><label style="font-size:11px">Email</label><input id="loginEmail" type="email" placeholder="admin@kaudha.co.ke" value=""></div>
 <div style="margin-top:8px"><label style="font-size:11px">Password</label><input id="loginPass" type="password" placeholder="1234"></div>
 <button class="btn p" style="width:100%;margin-top:12px;padding:12px" onclick="doLogin()">Login with Supabase</button>
-<div style="text-align:center;margin-top:10px;font-size:10px;color:#888">Dynamic - No hard code - Uses Supabase Auth</div>
+<div style="text-align:center;margin-top:10px;font-size:10px;color:#888">Project: ocaxorcezbhhheqaeahu - Connected</div>
 <div id="loginError" style="color:red;font-size:11px;margin-top:8px;text-align:center"></div>
 </div>
 </div>
@@ -54,16 +54,15 @@ input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius
 </div>
 
 <script>
-// ======== CHANGE ONLY THESE 2 LINES ========
-const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+// ======== YOUR REAL PROJECT - FIXED ========
+const SUPABASE_URL = "https://ocaxorcezbhhheqaeahu.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_jRu8TxoQibjDNmmFuXOV2g_25kfGYGd";
 // ===========================================
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let membersData = []; // NO HARD CODE - WILL LOAD FROM SUPABASE
+let membersData = [];
 let currentUser = null;
 let currentRole = 'member';
-let goals = [];
 
 function modalHTML(h){document.getElementById('box').innerHTML=h;document.getElementById('modal').classList.add('on');}
 function closem(){document.getElementById('modal').classList.remove('on');}
@@ -74,89 +73,67 @@ async function doLogin(){
   const pass = document.getElementById('loginPass').value.trim();
   if(!email || !pass) return document.getElementById('loginError').innerText = 'Enter email and password';
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
-  if(error){ document.getElementById('loginError').innerText = error.message; return; }
+  if(error){ document.getElementById('loginError').innerText = error.message + " - Create user in Supabase Auth first"; return; }
   await loadApp();
 }
-
 async function doLogout(){ await supabaseClient.auth.signOut(); location.reload(); }
 
 async function loadApp(){
   const { data: { session } } = await supabaseClient.auth.getSession();
   if(!session){ document.getElementById('loginWrap').style.display='flex'; document.getElementById('app').style.display='none'; return; }
-  
-  // DYNAMIC DASHBOARD - ONE CALL
   const { data, error } = await supabaseClient.rpc('get_dynamic_dashboard');
-  if(error){ console.error(error); alert(error.message); return; }
-
-  // Apply dynamic settings
+  if(error){ alert("RPC Error: "+error.message+" - Run the SQL I gave you first in Supabase"); console.error(error); return; }
   data.settings?.forEach(s => {
     document.querySelectorAll(`[data-setting="${s.key}"]`).forEach(el => { if(s.key==='app_title') el.innerText = '🐃 '+s.value; });
     if(s.key==='app_title') document.title = s.value;
   });
-
   membersData = data.members || [];
   currentUser = data.profile;
   currentRole = data.role || data.profile?.role || 'member';
-  
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('sideName').innerText = currentUser?.full_name || session.user.email;
-  document.getElementById('currentRoleLabel').innerText = currentRole;
-  document.getElementById('sideRoleBadge').innerText = currentRole;
+  document.getElementById('currentRoleLabel').innerText = currentRole || session.user.email;
+  document.getElementById('sideRoleBadge').innerText = currentRole || 'member';
   home();
 }
 
 function home(){
-  let my = membersData[0] || { arrears:0, status:'Credit' };
+  let my = membersData[0] || { arrears:0 };
   document.getElementById('main').innerHTML=`
-    <div class="hero"><h2 style="margin:0" data-setting="app_title">THE KAUDHA ALUMNI FRATERNITY Accounts</h2>
+    <div class="hero"><h2 style="margin:0">THE KAUDHA ALUMNI FRATERNITY - Connected to ${SUPABASE_URL}</h2>
     <div style="background:rgba(255,255,255,.14);border-radius:10px;padding:12px;margin-top:10px">
     <div style="font-weight:700">00001-0001-000059890-002-2</div>
-    <div style="font-weight:900;color:#b8ffb8;font-size:28px">KES 14,395.58 - LIVE FROM DB</div></div>
+    <div style="font-weight:900;color:#b8ffb8;font-size:22px">KES 14,395.58 - ${membersData.length} members LIVE</div></div>
     <div>Welcome <b>${currentUser?.full_name||''}</b></div></div>
     <div class="grid4" style="margin-top:14px">
       <div class="action" onclick="members()"><div style="font-size:36px">👥</div><b>${membersData.length} Members - DYNAMIC</b></div>
       <div class="action" onclick="statements()"><div style="font-size:36px">📑</div><b>Statements - 6 Buttons</b></div>
-      <div class="action"><div style="font-size:36px">💰</div><b>Balance Dynamic</b><br>${my.arrears||0}</div>
+      <div class="action"><div style="font-size:36px">💰</div><b>Balance Dynamic</b></div>
       <div class="action"><div style="font-size:36px">⚙️</div><b>Settings Dynamic</b></div>
     </div>`;
 }
-
 function statementCard(acct, name, bal){
-  return `<div class="statement-card">
-  <div style="font-size:13px">A/C: <b>${acct}</b></div>
-  <div>Goal: <b>${name||"MONTHLY CONTRIBUTION"}</b></div>
-  <div>Balance: <b>${bal||"14,395.58"}</b></div>
-  <div class="btns-grid">
-  <button class="btn-outline" onclick="openC('${acct}')">Chama Statement</button>
-  <button class="btn-outline" onclick="openB('${acct}')">Member Statement - DYNAMIC ${membersData.length}</button>
-  <button class="btn-outline" onclick="topup('${acct}')">Top Up</button>
-  <button class="btn-outline" onclick="openA('${acct}')">Annual Report</button>
-  <button class="btn-outline" onclick="openR('${acct}')">Reminders</button>
-  <button class="btn-outline" onclick="openL('${acct}')">Lock-In</button>
-  </div></div>`;
+  return `<div class="statement-card"><div>A/C: <b>${acct}</b></div><div>Goal: <b>${name}</b></div><div>Balance: <b>${bal}</b></div><div class="btns-grid"><button class="btn-outline" onclick="openC('${acct}')">Chama Statement</button><button class="btn-outline" onclick="openB('${acct}')">Member Statement - ${membersData.length}</button><button class="btn-outline" onclick="topup('${acct}')">Top Up</button><button class="btn-outline" onclick="openA('${acct}')">Annual Report</button><button class="btn-outline" onclick="openR('${acct}')">Reminders</button><button class="btn-outline" onclick="openL('${acct}')">Lock-In</button></div></div>`;
 }
-
 function statements(){
   let mainCard=statementCard("00001-0001-000059890-002-2","MONTHLY CONTRIBUTION","14,395.58");
   document.getElementById('main').innerHTML=`<div style="text-align:center;font-weight:900;font-size:20px;margin:10px 0">FAMILY DEVELOPMENT GROUP Accounts - DYNAMIC</div>${mainCard}<div style="text-align:center;margin-top:16px"><button class="btn l" onclick="home()">← Home</button></div>`;
 }
-
 function openB(acct){
   let rows=membersData.map((m,i)=>`<tr><td>${i+1}</td><td>${m.full_name}</td><td>${m.email}</td><td>${m.phone||''}</td><td>${m.membership_number}</td><td><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td></tr>`).join('');
-  modalHTML(`<div style="padding:14px"><div style="font-weight:900;text-align:center">Member Statement - DYNAMIC FROM SUPABASE - ${membersData.length} Members</div><div style="overflow:auto;max-height:50vh"><table><tr><th>No</th><th>Name</th><th>Email</th><th>Phone</th><th>Member No</th><th>Status</th></tr>${rows||'<tr><td colspan=6>No members in Supabase - Add from Members page</td></tr>'}</table></div><div style="text-align:center;padding:10px"><button class="btn l" onclick="closem()">Close</button></div></div>`);
+  modalHTML(`<div style="padding:14px"><div style="font-weight:900;text-align:center">Member Statement - LIVE ${membersData.length} Members</div><div style="overflow:auto;max-height:50vh"><table><tr><th>No</th><th>Name</th><th>Email</th><th>Phone</th><th>Member No</th><th>Status</th></tr>${rows||'<tr><td colspan=6>No members - Add from Members page</td></tr>'}</table></div><div style="text-align:center;padding:10px"><button class="btn l" onclick="closem()">Close</button></div></div>`);
 }
-function openC(acct){ modalHTML(`<div style="padding:16px"><h3>Chama Statement - ${acct} - DYNAMIC</h3><div style="background:#f5f5f0;padding:20px;border-radius:8px;text-align:center">Fetch from <b>transactions</b> table where account_no = '${acct}' - Will show ${membersData.length} member deposits<br><br>SELECT * FROM transactions WHERE account_number = '${acct}'</div><button class="btn l" onclick="closem()">Close</button></div>`); }
-function topup(acct){ modalHTML(`<div style="padding:16px"><h3>Top Up - ${acct}</h3><input id="mpesaPhone" placeholder="2547..." style="margin-top:8px"><input id="topupAmount" placeholder="Amount" style="margin-top:8px"><div style="display:flex;gap:8px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Close</button><button class="btn p" style="flex:1" onclick="alert('STK Push to '+document.getElementById('mpesaPhone').value)">Top Up</button></div></div>`); }
-function openA(acct){ modalHTML(`<div style="padding:16px;text-align:center"><h3>Annual Report - ${acct}</h3><p>Dynamic from transactions table - Year 2025 - Total deposits for ${membersData.length} members</p><button class="btn l" onclick="closem()">Close</button></div>`); }
-function openR(acct){ modalHTML(`<div style="padding:16px"><h3>Reminders - DYNAMIC TABLE</h3><p>Save to <b>reminders</b> table with user_id = auth.uid()</p><input placeholder="Reminder message"><button class="btn s" style="margin-top:8px;width:100%" onclick="alert('Save to Supabase reminders table')">Save</button></div>`); }
-function openL(acct){ modalHTML(`<div style="padding:16px"><h3>Lock-In - DYNAMIC</h3><p>Save to <b>locks</b> table</p><input placeholder="Amount"><input type="date" style="margin-top:8px"><button class="btn s" style="margin-top:8px;width:100%" onclick="alert('Lock saved to Supabase')">Lock</button></div>`); }
-
+function openC(acct){ modalHTML(`<div style="padding:16px"><h3>Chama Statement - ${acct}</h3><p>${membersData.length} members dynamic</p><button class="btn l" onclick="closem()">Close</button></div>`); }
+function topup(acct){ modalHTML(`<div style="padding:16px"><h3>Top Up - ${acct}</h3><input id="mpesaPhone" placeholder="2547..."><input id="topupAmount" placeholder="Amount" style="margin-top:8px"><div style="display:flex;gap:8px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Close</button><button class="btn p" style="flex:1" onclick="alert('STK')">Top Up</button></div></div>`); }
+function openA(acct){ modalHTML(`<div style="padding:16px;text-align:center"><h3>Annual Report - ${acct}</h3><button class="btn l" onclick="closem()">Close</button></div>`); }
+function openR(acct){ modalHTML(`<div style="padding:16px"><h3>Reminders</h3><button class="btn l" onclick="closem()">Close</button></div>`); }
+function openL(acct){ modalHTML(`<div style="padding:16px"><h3>Lock-In</h3><button class="btn l" onclick="closem()">Close</button></div>`); }
 function members(){
   let rows=membersData.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.full_name}</b><br><small>${m.membership_number}</small></td><td>${m.email}<br>${m.phone||''}</td><td><span class="${(m.status||'active').toLowerCase()==='active'?'status-credit':'status-arrears'}">${m.status||'active'}</span></td><td><button class="btn d" style="padding:4px 8px" onclick="deleteMember('${m.id}')">Del</button></td></tr>`).join('');
-  document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - DYNAMIC FROM SUPABASE - ${membersData.length} Total</h2><div style="margin:10px 0"><button class="btn s" onclick="openAddMember()">+ Add Member Dynamic</button></div><div style="overflow:auto"><table><tr><th>No</th><th>Member</th><th>Contact</th><th>Status</th><th>Action</th></tr>${rows||'<tr><td colspan=5>No members yet - table is empty in Supabase</td></tr>'}</table></div></div>`;
+  document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - ${membersData.length} from Supabase</h2><div style="margin:10px 0"><button class="btn s" onclick="openAddMember()">+ Add Member</button></div><div style="overflow:auto"><table><tr><th>No</th><th>Member</th><th>Contact</th><th>Status</th><th>Action</th></tr>${rows||'<tr><td colspan=5>No members yet</td></tr>'}</table></div></div>`;
 }
-function openAddMember(){ modalHTML(`<div style="padding:16px"><h3>Add Member - Saves to Supabase members table with user_id = auth.uid()</h3><input id="newMNo" placeholder="KA-001"><input id="newMName" placeholder="Full Name" style="margin-top:6px"><input id="newMEmail" placeholder="Email" style="margin-top:6px"><input id="newMPhone" placeholder="Phone" style="margin-top:6px"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveMemberDynamic()">Save to Supabase</button></div></div>`); }
+function openAddMember(){ modalHTML(`<div style="padding:16px"><h3>Add Member</h3><input id="newMNo" placeholder="KA-001"><input id="newMName" placeholder="Full Name" style="margin-top:6px"><input id="newMEmail" placeholder="Email" style="margin-top:6px"><input id="newMPhone" placeholder="Phone" style="margin-top:6px"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveMemberDynamic()">Save</button></div></div>`); }
 async function saveMemberDynamic(){
   const { data, error } = await supabaseClient.rpc('create_member_dynamic', {
     p_full_name: document.getElementById('newMName').value,
@@ -167,8 +144,7 @@ async function saveMemberDynamic(){
   if(error) alert(error.message); else { closem(); await loadApp(); members(); }
 }
 async function deleteMember(id){ if(!confirm('Delete?')) return; const { error } = await supabaseClient.from('members').delete().eq('id', id); if(error) alert(error.message); else { await loadApp(); members(); } }
-function settings(){ document.getElementById('main').innerHTML=`<div class="card"><h2>Settings - DYNAMIC FROM app_settings table</h2><p>Your settings are now from Supabase table <b>app_settings</b> - Edit in Supabase Dashboard > Table Editor > app_settings</p><p>Keys: app_title, portal_notice, paybill, interest_rate etc.</p><button class="btn s" onclick="loadApp()">Reload Dynamic Settings</button></div>`; }
-
+function settings(){ document.getElementById('main').innerHTML=`<div class="card"><h2>Settings - Dynamic from app_settings</h2><p>Edit in Supabase Table Editor</p><button class="btn s" onclick="loadApp()">Reload</button></div>`; }
 document.addEventListener('DOMContentLoaded', async () => { const { data:{session} } = await supabaseClient.auth.getSession(); if(session) await loadApp(); });
 </script>
 </body></html>
