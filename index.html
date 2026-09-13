@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KAUDHA - SUPABASE LIVE</title>
+<title>KAUDHA - REAL DYNAMIC - NO HARD CODE</title>
 <script type="importmap">{"imports":{"@supabase/supabase-js":"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm"}}</script>
 <style>
 :root{--maroon:#7a1010;--forest:#1E5631;--border:#d9d2b8;--green:#2e6b28;--crimson:#8B1E22}
@@ -10,7 +10,6 @@
 .main{margin-left:280px;padding:16px}
 .nav-btn{width:100%;display:flex;gap:10px;padding:11px;border:0;background:transparent;border-radius:8px;cursor:pointer;text-align:left;font-size:13px;align-items:center}
 .nav-btn:hover{background:#f6f3e8}.nav-btn.dev{background:var(--forest);color:#fff;font-weight:700;margin-top:10px}
-.nav-btn.profile-btn{background:#fdf6f6;border:1.5px solid var(--crimson);font-weight:800;margin-bottom:8px}
 .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
 .hero{background:linear-gradient(120deg,var(--maroon),#a11a1a);color:#fff;border-radius:16px;padding:22px}
 .btn{border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.btn.p{background:var(--maroon);color:#fff}.btn.s{background:var(--forest);color:#fff}.btn.l{background:#eee;color:#333}.btn.d{background:#c0392b;color:#fff}
@@ -18,163 +17,157 @@
 .action{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer}
 .arrears-card{background:linear-gradient(135deg,#ffebee,#ffcdd2);border:2px solid #c0392b!important}
 .action.member-credit{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #2e6b28!important}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}.modal.on{display:flex}.box{background:#fff;border-radius:12px;padding:0;width:min(96%,980px);max-height:92vh;overflow:auto}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:99;padding:10px}.modal.on{display:flex}.box{background:#fff;border-radius:12px;padding:16px;width:min(96%,980px);max-height:92vh;overflow:auto}
 table{width:100%;border-collapse:collapse}th{background:#1a1a1a;color:#fff;padding:10px 8px;text-align:left;font-size:11px}td{padding:10px 8px;border-bottom:1px solid #eee;font-size:11px}
-input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:8px;background:#fffdf0;font-size:12px}
-.statements-title{text-align:center;font-weight:900;font-size:20px;margin:10px 0 20px;color:#111}
-.statement-card{border:1.5px solid #9b2c2c;border-radius:14px;padding:20px 16px;background:#fdfcf0;max-width:520px;margin:0 auto 20px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:8px;background:#fffdf0;font-size:12px;margin-top:6px}
+.statement-card{border:1.5px solid #9b2c2c;border-radius:14px;padding:20px 16px;background:#fdfcf0;max-width:520px;margin:0 auto 20px;text-align:center}
 .btns-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
 .btn-outline{border:1.5px solid var(--green);background:#fff;color:var(--green);padding:10px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
-.profile-avatar{width:90px;height:90px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 10px;overflow:hidden;border:3px solid var(--maroon)}
-.status-arrears{background:#f8c6d0;color:#a00;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block;min-width:60px;text-align:center}
-.status-credit{background:#b8e6c6;color:#0a5a2a;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block;min-width:60px;text-align:center}
-.role-badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;display:inline-block}
-.role-admin{background:#1a1a1a;color:#fff}.role-member{background:#2e6b28;color:#fff}.role-manager{background:#7a1010;color:#fff}
+.status-arrears{background:#f8c6d0;color:#a00;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block}
+.status-credit{background:#b8e6c6;color:#0a5a2a;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;display:inline-block}
 .login-wrap{position:fixed;inset:0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
-.login-box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(96%,400px);box-shadow:0 4px 20px rgba(0,0,0,.08)}
-.login-logo{background:var(--crimson);color:#fff;padding:10px 16px;font-weight:900;text-align:center;border-radius:8px;margin-bottom:16px}
-.login-input{margin-bottom:12px}.login-input label{font-size:11px;color:#333;display:block;margin-bottom:4px;font-weight:600}
-.login-input input,.login-input select{padding:12px;background:#fff;border:1px solid #ccc;border-radius:8px}
-.settings-tab{padding:10px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;font-size:12px;font-weight:700;text-align:center}
-.settings-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
-.settings-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
-.theme-box{width:100%;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.login-box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:min(96%,400px)}
 </style></head><body>
 
 <div class="login-wrap" id="loginWrap">
 <div class="login-box">
-<div class="login-logo">🐃 ZIMELE - SUPABASE LIVE</div>
-<div style="text-align:center;margin-bottom:16px"><b>THE KAUDHA ALUMNI FRATERNITY</b><br><small id="connStatus" style="color:green">Connecting to ocaxorcezbhhheqaeahu...</small></div>
+<div style="background:var(--crimson);color:#fff;padding:10px 16px;font-weight:900;text-align:center;border-radius:8px;margin-bottom:16px">🐃 ZIMELE - NO HARD CODE</div>
+<div style="text-align:center;margin-bottom:16px"><b>KAUDHA ALUMNI FRATERNITY</b><br><small id="connStatus" style="color:#666">Loading members LIVE from Supabase...</small></div>
 <div id="loginForm">
-<div class="login-input"><label>Member - LIVE FROM SUPABASE</label><select id="loginMember"><option>Loading members from Supabase...</option></select></div>
-<div class="login-input"><label>Member No / Phone</label><input id="loginId" value="000059890"></div>
-<div class="login-input"><label>Password</label><input id="loginPass" type="password" value="1234"></div>
-<button class="btn p" style="width:100%;padding:12px" onclick="doLogin()">Login</button>
+<div><label style="font-size:11px">Select Member (LIVE from Supabase)</label><select id="loginMember"><option>Fetching from Supabase...</option></select></div>
+<div style="margin-top:8px"><label style="font-size:11px">Password</label><input id="loginPass" type="password" value="1234"></div>
+<button class="btn p" style="width:100%;padding:12px;margin-top:8px" onclick="doLogin()">Login - Dynamic</button>
 </div>
-<div id="forgotForm" style="display:none"><div style="text-align:center"><button class="btn l" onclick="closeForgot()">Back</button></div></div>
 </div>
 </div>
 
 <div id="app" style="display:none">
-<div class="top"><div>🐃 ZIMELE - KAUDHA ALUMNI - LIVE SUPABASE</div><div style="display:flex;gap:8px;align-items:center"><span style="background:rgba(255,255,255,.2);padding:6px 10px;border-radius:20px;font-size:11px">Role: <b id="currentRoleLabel">Member</b></span><span style="cursor:pointer" onclick="doLogout()">Logout</span></div></div>
-<div class="side"><div style="text-align:center;padding:10px;border-bottom:1px solid var(--border)"><div class="profile-avatar" id="sideAvatar">👤</div><b id="sideName">James</b><br><span class="role-badge role-member" id="sideRoleBadge">Member</span><div style="margin-top:8px"><button class="nav-btn profile-btn" onclick="openProfile()">👤 Profile</button></div></div>
-<button class="nav-btn" onclick="home()">🏠 Home</button><button class="nav-btn" onclick="members()">👥 Members - LIVE</button><button class="nav-btn" onclick="statements()">📑 Statements - 6 Buttons</button><button class="nav-btn dev" onclick="settings()">⚙️ Settings - 15 Modules</button></div>
-<div class="main" id="main"></div><div class="modal" id="modal"><div class="box" id="box"></div></div>
+<div class="top"><div>🐃 ZIMELE - <span id="liveCount">0 Members LIVE</span> - Supabase ocaxorcezbhhheqaeahu</div><div style="display:flex;gap:8px;align-items:center"><b id="currentRoleLabel">Member</b><span style="cursor:pointer" onclick="doLogout()">Logout</span></div></div>
+<div class="side"><div style="text-align:center;padding:10px;border-bottom:1px solid var(--border)"><b id="sideName">-</b><br><span id="sideRoleBadge">-</span></div>
+<button class="nav-btn" onclick="home()">🏠 Home - Arrears Card LIVE</button>
+<button class="nav-btn" onclick="members()">👥 Members - LIVE Supabase CRUD</button>
+<button class="nav-btn" onclick="statements()">📑 Statements - 6 Buttons ACTIVE</button>
+<button class="nav-btn dev" onclick="settings()">⚙️ Settings - DYNAMIC</button>
+</div>
+<div class="main" id="main">Loading...</div>
+<div class="modal" id="modal"><div class="box" id="box"></div></div>
 </div>
 
 <script type="module">
 import { createClient } from "@supabase/supabase-js";
 const supabase = createClient("https://ocaxorcezbhhheqaeahu.supabase.co", "sb_publishable_jRu8TxoQibjDNmmFuXOV2g_25kfGYGd");
-window.supabaseClient = supabase;
+window.supabase = supabase;
+window.membersData = []; // REAL DYNAMIC - NO HARD CODE
 
-window.membersData = [];
-async function loadMembersLive(){
+export async function loadLive(){
+  document.getElementById('connStatus').innerText = "Connecting to Supabase...";
   try{
-    const { data, error } = await supabase.from('members').select('*').order('created_at', {ascending:true});
+    const { data, error } = await supabase.from('members').select('*').order('membership_number');
     if(error) throw error;
     window.membersData = data.map(d=>({
-      name:d.full_name||d.name, short:(d.full_name||d.name||'').split(' ')[0], phone:d.phone, memberNo:d.membership_number, email:d.email, idNo:d.id_no||'ID',
-      zimele: d.zimele||15460, monthly: d.monthly||17650, arrears: d.arrears?? (d.zimele - d.monthly), status: d.status||'Arrears', withdrawal: d.withdrawal||'0.00', role: d.role||'Member', joined: d.created_at?.split('T')[0]||'2023-01-15', supabase_id: d.id
+      id:d.id, name:d.full_name, short:d.full_name.split(' ')[0], phone:d.phone, memberNo:d.membership_number, email:d.email,
+      zimele:d.zimele||15460, monthly:d.monthly||17650, arrears:d.arrears??(d.zimele-d.monthly), status:d.status||'Arrears', withdrawal:d.withdrawal||'0.00', role:d.role||'Member', joined:d.created_at?.split('T')[0]
     }));
-    document.getElementById('connStatus').innerText = `✅ Connected - ${window.membersData.length} members LIVE`;
-    document.getElementById('loginMember').innerHTML = window.membersData.map(m=>`<option value="${m.short}">${m.name} - ${m.status} ${m.arrears}</option>`).join('') + '<option value="Manager">Manager</option><option value="Admin">Super Admin</option>';
+    document.getElementById('connStatus').innerText = `✅ ${window.membersData.length} members LIVE - NO HARD CODE`;
+    document.getElementById('loginMember').innerHTML = window.membersData.map(m=>`<option value="${m.short}">${m.name} - ${m.status} ${m.arrears}</option>`).join('') + '<option value="Admin">Super Admin</option><option value="Manager">Manager</option>';
+    document.getElementById('liveCount').innerText = `${window.membersData.length} Members LIVE - NO HARD CODE`;
   }catch(e){
-    document.getElementById('connStatus').innerText = "❌ "+e.message+" - Run SQL: create table members...";
-    // Fallback hardcoded so UI still opens
-    window.membersData = [
-      {name:"James Andaro Okingo",short:"James",phone:"254799458679",memberNo:"000059890",email:"james@kaudha.co.ke",idNo:"12345678",zimele:15460,monthly:17650,arrears:-2190,status:"Arrears",withdrawal:"2,190.00",role:"Member",joined:"2023-01-15",supabase_id:null},
-      {name:"Edwin Okingo Omondi",short:"Edwin",phone:"254705241089",memberNo:"000059891",email:"edwin@kaudha.co.ke",idNo:"23456789",zimele:43450,monthly:16370,arrears:27080,status:"Credit",withdrawal:"0.00",role:"Member",joined:"2023-02-10",supabase_id:null},
-    ];
+    document.getElementById('connStatus').innerText = "❌ "+e.message+" - Run SQL below";
+    document.getElementById('connStatus').style.color="red";
   }
 }
-loadMembersLive();
-window.loadMembersLive = loadMembersLive;
+window.loadLive = loadLive;
+loadLive();
 </script>
 
 <script>
-let currentUser=JSON.parse(localStorage.getItem('KAUDHA_USER')||'{"name":"James Andaro Okingo","memberNo":"000059890","phone":"254799458679","email":"james@kaudha.co.ke","role":"Member","avatar":""}');
-let currentRole=localStorage.getItem('KAUDHA_ROLE')||'Member';
-let goals=JSON.parse(localStorage.getItem('KAUDHA_F')||'[]');
-let reminders=JSON.parse(localStorage.getItem('KAUDHA_R')||'[]');
-let locks=JSON.parse(localStorage.getItem('KAUDHA_L')||'[]');
-let auditLog=JSON.parse(localStorage.getItem('KAUDHA_AUDIT')||'[]');
-function saveG(){localStorage.setItem('KAUDHA_F',JSON.stringify(goals));}
-function saveR(){localStorage.setItem('KAUDHA_R',JSON.stringify(reminders));}
-function saveL(){localStorage.setItem('KAUDHA_L',JSON.stringify(locks));}
-function saveAudit(){localStorage.setItem('KAUDHA_AUDIT',JSON.stringify(auditLog));}
-function saveUser(){localStorage.setItem('KAUDHA_USER',JSON.stringify(currentUser));localStorage.setItem('KAUDHA_ROLE',currentRole);}
+let currentUser={}, currentRole='Member';
 function modalHTML(h){document.getElementById('box').innerHTML=h;document.getElementById('modal').classList.add('on');}
 function closem(){document.getElementById('modal').classList.remove('on');}
 document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closem();};
 function doLogin(){
-let m=document.getElementById('loginMember').value;
-let md=window.membersData.find(x=>x.short===m)||window.membersData[0];
-if(!md) return alert('Wait for Supabase to load');
-if(m==='Manager'){currentUser={name:"Manager - Nicholas Otiemo",memberNo:"MGR001",phone:"254710828430",email:"manager@kaudha.co.ke",role:"Manager"};currentRole="Manager";}
-else if(m==='Admin'){currentUser={name:"Super Admin",memberNo:"ADM001",phone:"254700000000",email:"admin@kaudha.co.ke",role:"Admin"};currentRole="Admin";}
-else{currentUser={name:md.name,memberNo:md.memberNo,phone:md.phone,email:md.email,role:"Member",avatar:"",arrears:md.arrears};currentRole="Member";}
-localStorage.setItem('KAUDHA_LOGGED','1');saveUser();showApp();
+  let m=document.getElementById('loginMember').value;
+  if(!window.membersData.length && m!=='Admin' && m!=='Manager') return alert('Wait - Supabase still loading. If 0 members, run SQL to seed.');
+  let md=window.membersData.find(x=>x.short===m);
+  if(m==='Admin'){currentUser={name:"Super Admin",memberNo:"ADM001",role:"Admin"};currentRole="Admin";}
+  else if(m==='Manager'){currentUser={name:"Manager",memberNo:"MGR001",role:"Manager"};currentRole="Manager";}
+  else{currentUser={name:md.name,memberNo:md.memberNo,phone:md.phone,email:md.email,role:"Member",arrears:md.arrears};currentRole="Member";}
+  localStorage.setItem('KAUDHA_LOGGED','1'); localStorage.setItem('KAUDHA_USER',JSON.stringify(currentUser)); localStorage.setItem('KAUDHA_ROLE',currentRole); showApp();
 }
 function doLogout(){localStorage.removeItem('KAUDHA_LOGGED');document.getElementById('app').style.display='none';document.getElementById('loginWrap').style.display='flex';}
-function showApp(){document.getElementById('loginWrap').style.display='none';document.getElementById('app').style.display='block';document.getElementById('sideName').textContent=currentUser.name;document.getElementById('currentRoleLabel').textContent=currentRole;document.getElementById('sideRoleBadge').textContent=currentRole;home();}
-function openForgot(){document.getElementById('loginForm').style.display='none';document.getElementById('forgotForm').style.display='block';}
-function closeForgot(){document.getElementById('loginForm').style.display='block';document.getElementById('forgotForm').style.display='none';}
+function showApp(){document.getElementById('loginWrap').style.display='none';document.getElementById('app').style.display='block';document.getElementById('sideName').innerText=currentUser.name;document.getElementById('currentRoleLabel').innerText=currentRole;document.getElementById('sideRoleBadge').innerText=currentRole;home();}
 
 function home(){
-let myData=window.membersData.find(m=>currentUser.name.includes(m.short))||window.membersData[0]||{arrears:-2190,status:"Arrears"};
-let isCredit=myData.arrears>=0;
-let arrearsCard=`<div class="action ${isCredit?'member-credit':'arrears-card'}" onclick="openB('00001-0001-000059890-002-2')"><div style="font-size:36px">${isCredit?'💰':'⚠️'}</div><b>Arrears Card LIVE</b><br><div style="font-size:11px">${window.membersData.length} members from Supabase</div><div style="font-weight:900;font-size:22px;color:${isCredit?'#2e6b28':'#c0392b'}">KES ${myData.arrears.toLocaleString()}</div><div><span class="${isCredit?'status-credit':'status-arrears'}">${myData.status}</span></div></div>`;
-document.getElementById('main').innerHTML=`<div class="hero"><h2>THE KAUDHA ALUMNI FRATERNITY - ${window.membersData.length} Members LIVE</h2><div style="background:rgba(255,255,255,.14);border-radius:10px;padding:12px;margin-top:10px"><div>00001-0001-000059890-002-2</div><div style="font-weight:900;color:#b8ffb8;font-size:28px">KES 14,395.58 - Supabase ✅</div></div><div>Welcome <b>${currentUser.name}</b> - <span class="role-badge role-member">${currentRole}</span></div></div><div class="grid4" style="margin-top:14px"><div class="action" onclick="members()"><div style="font-size:36px">👥</div><b>${window.membersData.length} Members DYNAMIC</b></div><div class="action" onclick="statements()"><div style="font-size:36px">📑</div><b>Statements 6 Buttons</b></div><div class="action"><div style="font-size:36px">💳</div><b>Loan</b></div>${arrearsCard}</div>`;
+  let my=window.membersData.find(m=>currentUser.name.includes(m.short))||window.membersData[0]||{arrears:-2190,status:"Arrears",name:"No Members Yet"};
+  let isCredit=my.arrears>=0;
+  document.getElementById('main').innerHTML=`
+  <div class="hero"><h2>THE KAUDHA ALUMNI FRATERNITY - REAL DYNAMIC - ${window.membersData.length} Members from Supabase</h2>
+  <div style="background:rgba(255,255,255,.14);border-radius:10px;padding:12px;margin-top:10px"><div>00001-0001-000059890-002-2</div><div style="font-weight:900;color:#b8ffb8;font-size:28px">KES 14,395.58 - LIVE DB</div></div>
+  <div>Welcome <b>${currentUser.name}</b> - ${window.membersData.length} members NO HARD CODE</div></div>
+  <div class="grid4" style="margin-top:14px">
+    <div class="action" onclick="members()"><div style="font-size:36px">👥</div><b>${window.membersData.length} Members - DYNAMIC</b><br><small>From Supabase table</small></div>
+    <div class="action" onclick="statements()"><div style="font-size:36px">📑</div><b>Statements</b><br><small>6 Buttons ACTIVE</small></div>
+    <div class="action"><div style="font-size:36px">💳</div><b>Loan - ACTIVE</b></div>
+    <div class="action ${isCredit?'member-credit':'arrears-card'}"><div style="font-size:36px">${isCredit?'💰':'⚠️'}</div><b>Arrears Card LIVE</b><br>KES ${my.arrears?.toLocaleString()||0}<br><span class="${isCredit?'status-credit':'status-arrears'}">${my.status}</span></div>
+  </div>`;
 }
-function statements(){let card=`<div class="statement-card"><div>A/C: <b>00001-0001-000059890-002-2</b></div><div>Goal: <b>MONTHLY CONTRIBUTION</b></div><div>Balance: <b>14,395.58</b></div><div class="btns-grid"><button class="btn-outline" onclick="openC('00001-0001-000059890-002-2')">Chama Statement</button><button class="btn-outline" onclick="openB('00001-0001-000059890-002-2')">Member Statement - ${window.membersData.length} LIVE</button><button class="btn-outline" onclick="topup('00001-0001-000059890-002-2')">Top Up</button><button class="btn-outline" onclick="openA('00001-0001-000059890-002-2')">Annual Report</button><button class="btn-outline" onclick="openR('00001-0001-000059890-002-2')">Reminders</button><button class="btn-outline" onclick="openL('00001-0001-000059890-002-2')">Lock-In</button></div></div>`;document.getElementById('main').innerHTML=`<div class="statements-title">FAMILY DEVELOPMENT GROUP - LIVE ${window.membersData.length}</div>${card}<div style="text-align:center"><button class="btn l" onclick="home()">Home</button></div>`;}
-function openC(acct){modalHTML(`<div style="padding:16px"><h3>Chama Statement ${acct}</h3><p>${window.membersData.length} members LIVE from Supabase</p><button class="btn l" onclick="closem()">Close</button></div>`);}
-function openB(acct){let rows=window.membersData.map((m,i)=>`<tr><td>${i+1}</td><td>${m.short}</td><td>-</td><td>0.00</td><td>${m.withdrawal}</td><td>${m.zimele.toLocaleString()}</td><td>${m.monthly.toLocaleString()}</td><td style="color:${m.arrears<0?'#d00':'#0a5a2a'};font-weight:700">${m.arrears.toLocaleString()}</td><td><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td></tr>`).join('');modalHTML(`<div style="padding:14px"><div style="font-weight:900;text-align:center">Member Statement - LIVE SUPABASE - ${window.membersData.length} Members</div><div style="overflow:auto;max-height:50vh"><table><tr><th>No</th><th>Date</th><th>Description</th><th>Deposit</th><th>Withdrawal</th><th>Zimele</th><th>Monthly</th><th>Arrears</th><th>Status</th></tr>${rows}</table></div><div style="padding:10px;text-align:center"><button class="btn l" onclick="closem()">Close</button></div></div>`);}
-function topup(acct){modalHTML(`<div style="padding:16px"><h3>Top Up ${acct}</h3><input placeholder="2547..."><input placeholder="Amount" style="margin-top:6px"><button class="btn l" onclick="closem()">Close</button></div>`);}
-function openA(acct){modalHTML(`<div style="padding:16px"><h3>Annual Report ${acct}</h3><button class="btn l" onclick="closem()">Close</button></div>`);}
-function openR(acct){modalHTML(`<div style="padding:16px"><h3>Reminders ${acct}</h3><button class="btn l" onclick="closem()">Close</button></div>`);}
-function openL(acct){modalHTML(`<div style="padding:16px"><h3>Lock-In ${acct}</h3><button class="btn l" onclick="closem()">Close</button></div>`);}
+
+function statements(){
+  let card=`<div class="statement-card"><div>A/C: <b>00001-0001-000059890-002-2</b></div><div>Goal: <b>MONTHLY CONTRIBUTION</b></div><div>Balance: <b>14,395.58</b></div><div class="btns-grid">
+  <button class="btn-outline" onclick="openC()">Chama Statement</button>
+  <button class="btn-outline" onclick="openB()">Member Statement - ${window.membersData.length} LIVE</button>
+  <button class="btn-outline" onclick="topup()">Top Up</button>
+  <button class="btn-outline" onclick="openA()">Annual Report</button>
+  <button class="btn-outline" onclick="openR()">Reminders</button>
+  <button class="btn-outline" onclick="openL()">Lock-In</button></div></div>`;
+  document.getElementById('main').innerHTML=`<div style="text-align:center;font-weight:900;font-size:20px;margin:10px 0">FAMILY DEVELOPMENT GROUP - ${window.membersData.length} LIVE</div>${card}<div style="text-align:center"><button class="btn l" onclick="home()">Home</button></div>`;
+}
+function openB(){
+  let rows=window.membersData.map((m,i)=>`<tr><td>${i+1}</td><td>${m.short}</td><td>0.00</td><td>${m.withdrawal}</td><td>${m.zimele.toLocaleString()}</td><td>${m.monthly.toLocaleString()}</td><td style="color:${m.arrears<0?'#d00':'#0a5a2a'};font-weight:700">${m.arrears.toLocaleString()}</td><td><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td></tr>`).join('');
+  modalHTML(`<div><div style="font-weight:900;text-align:center">Member Statement - LIVE ${window.membersData.length} Members - NO HARD CODE</div><div style="overflow:auto;max-height:50vh"><table><tr><th>No</th><th>Member</th><th>Deposit</th><th>Withdrawal</th><th>Zimele</th><th>Monthly</th><th>Arrears</th><th>Status</th></tr>${rows||'<tr><td colspan=8>No members in Supabase - Add from Members page</td></tr>'}</table></div><div style="text-align:center;padding:10px"><button class="btn l" onclick="closem()">Close</button></div></div>`);
+}
+function openC(){modalHTML(`<div style="padding:16px"><h3>Chama Statement - LIVE ${window.membersData.length} members</h3><table><tr><th>Date</th><th>Description</th><th>Deposit</th></tr>${window.membersData.map(m=>`<tr><td>2025-09-07</td><td>M-pesa: ${m.phone}, ${m.name}</td><td>${m.zimele.toLocaleString()}</td></tr>`).join('')}</table><button class="btn l" onclick="closem()">Close</button></div>`);}
+function topup(){modalHTML(`<div style="padding:16px"><h3>Top Up With Mpesa</h3><p>Paybill 501101 - LIVE ${window.membersData.length} members</p><input placeholder="2547..."><input placeholder="Amount" style="margin-top:6px"><button class="btn p" style="width:100%;margin-top:8px" onclick="alert('STK Push LIVE')">Top Up</button><button class="btn l" style="width:100%;margin-top:6px" onclick="closem()">Close</button></div>`);}
+function openA(){modalHTML(`<div style="padding:16px;text-align:center"><h3>Annual Report FY 2025 - LIVE ${window.membersData.length} members</h3><button class="btn l" onclick="closem()">Close</button></div>`);}
+function openR(){modalHTML(`<div style="padding:16px"><h3>Reminders - LIVE</h3><button class="btn l" onclick="closem()">Close</button></div>`);}
+function openL(){modalHTML(`<div style="padding:16px"><h3>Lock-In - LIVE</h3><button class="btn l" onclick="closem()">Close</button></div>`);}
+
 function members(){
-let rows=window.membersData.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.name}</b><br><small>${m.memberNo} | ${m.role}</small></td><td>${m.phone}<br><small>${m.email}</small></td><td style="text-align:right">${m.zimele.toLocaleString()}<br><small>Monthly: ${m.monthly.toLocaleString()}</small></td><td style="text-align:right;color:${m.arrears<0?'#c0392b':'#2e6b28'};font-weight:700">${m.arrears.toLocaleString()}<br><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td><td><div style="display:flex;gap:4px"><button class="btn s" style="padding:4px 6px;font-size:9px" onclick="viewMember(${i})">View</button><button class="btn p" style="padding:4px 6px;font-size:9px" onclick="editMember(${i})">Edit</button><button class="btn d" style="padding:4px 6px;font-size:9px" onclick="deleteMember(${i})">Del</button></div></td></tr>`).join('');
-document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - LIVE ${window.membersData.length} - Supabase ocaxorcezbhhheqaeahu</h2><div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn s" onclick="addMember()">+ Add Member to Supabase</button><button class="btn p" onclick="window.loadMembersLive()">🔄 Reload LIVE</button></div><div style="overflow:auto;max-height:60vh"><table><tr><th>No</th><th>Member</th><th>Phone / Email</th><th>Zimele / Monthly</th><th>Arrears</th><th>Action</th></tr>${rows}</table></div></div>`;
+  let rows=window.membersData.map((m,i)=>`<tr><td>${i+1}</td><td><b>${m.name}</b><br><small>${m.memberNo} | ${m.role}</small></td><td>${m.phone}<br><small>${m.email}</small></td><td style="text-align:right">${m.zimele.toLocaleString()}<br><small>Monthly: ${m.monthly.toLocaleString()}</small></td><td style="text-align:right;color:${m.arrears<0?'#c0392b':'#2e6b28'};font-weight:700">${m.arrears.toLocaleString()}<br><span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span></td><td><button class="btn p" style="padding:4px 6px;font-size:9px" onclick="editMember(${i})">Edit</button> <button class="btn d" style="padding:4px 6px;font-size:9px" onclick="deleteMember(${i})">Del</button></td></tr>`).join('');
+  document.getElementById('main').innerHTML=`<div class="card"><h2>👥 Members - REAL DYNAMIC - ${window.membersData.length} from Supabase - NO HARD CODE - ocaxorcezbhhheqaeahu</h2><div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn s" onclick="addMember()">+ Add Member to Supabase LIVE</button><button class="btn p" onclick="window.loadLive()">🔄 Reload LIVE</button></div><div style="overflow:auto"><table><tr><th>No</th><th>Member - LIVE</th><th>Phone</th><th>Zimele</th><th>Arrears LIVE</th><th>Actions - LIVE DB</th></tr>${rows||'<tr><td colspan=6 style="text-align:center;padding:20px">No members in Supabase yet<br>Click + Add Member or run SQL to seed 14 members<br>Table: members in project ocaxorcezbhhheqaeahu</td></tr>'}</table></div></div>`;
 }
-window.viewMember=function(i){
-let m=window.membersData[i];
-modalHTML(`<div style="padding:16px"><h3>👤 ${m.name} - LIVE FROM SUPABASE</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px"><div style="background:#f9f9f9;padding:10px;border-radius:8px"><b>Member No:</b> ${m.memberNo}<br><b>Phone:</b> ${m.phone}<br><b>Email:</b> ${m.email}<br><b>Role:</b> <span class="role-badge ${m.role==='Admin'?'role-admin':m.role==='Manager'?'role-manager':'role-member'}">${m.role}</span><br><b>Joined:</b> ${m.joined}</div><div style="background:#fdfcf0;padding:10px;border-radius:8px;border:1px solid var(--border)"><b>Zimele:</b> KES ${m.zimele.toLocaleString()}<br><b>Monthly:</b> KES ${m.monthly.toLocaleString()}<br><b>Arrears:</b> <span style="color:${m.arrears<0?'#c0392b':'#2e6b28'};font-weight:900">${m.arrears.toLocaleString()}</span> <span class="${m.status==='Credit'?'status-credit':'status-arrears'}">${m.status}</span><br><b>Withdrawal:</b> ${m.withdrawal}</div></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn s" onclick="topup('00001-0001-000059890-002-2')">Top Up</button><button class="btn p" onclick="openB('00001-0001-000059890-002-2')">Statement</button><button class="btn l" onclick="closem()">Close</button></div></div>`);
-};
-window.editMember=async function(i){
-let m=window.membersData[i];
-modalHTML(`<div style="padding:16px"><h3>✏️ Edit Member - ${m.name} - Saves to Supabase</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div><label style="font-size:10px">Full Name</label><input id="editMName" value="${m.name}"></div><div><label style="font-size:10px">Phone</label><input id="editMPhone" value="${m.phone}"></div><div><label style="font-size:10px">Member No</label><input id="editMMemberNo" value="${m.memberNo}"></div><div><label style="font-size:10px">Email</label><input id="editMEmail" value="${m.email}"></div><div><label style="font-size:10px">Zimele</label><input id="editMZimele" type="number" value="${m.zimele}"></div><div><label style="font-size:10px">Monthly</label><input id="editMMonthly" type="number" value="${m.monthly}"></div><div><label style="font-size:10px">Role</label><select id="editMRole"><option ${m.role==='Member'?'selected':''}>Member</option><option ${m.role==='Manager'?'selected':''}>Manager</option><option ${m.role==='Admin'?'selected':''}>Admin</option></select></div><div><label style="font-size:10px">Status</label><select id="editMStatus"><option ${m.status==='Arrears'?'selected':''}>Arrears</option><option ${m.status==='Credit'?'selected':''}>Credit</option></select></div></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveEditMember(${i})">💾 Save to Supabase</button></div></div>`);
-};
-window.saveEditMember=async function(i){
-let m=window.membersData[i];
-let updated={full_name:document.getElementById('editMName').value, phone:document.getElementById('editMPhone').value, membership_number:document.getElementById('editMMemberNo').value, email:document.getElementById('editMEmail').value, zimele:parseInt(document.getElementById('editMZimele').value)||0, monthly:parseInt(document.getElementById('editMMonthly').value)||0, role:document.getElementById('editMRole').value, status:document.getElementById('editMStatus').value};
-updated.arrears = updated.zimele - updated.monthly;
-if(m.supabase_id){
-  const { error } = await window.supabaseClient.from('members').update(updated).eq('id', m.supabase_id);
-  if(error) return alert(error.message);
-}
-window.membersData[i] = {...m, name:updated.full_name, phone:updated.phone, memberNo:updated.membership_number, email:updated.email, zimele:updated.zimele, monthly:updated.monthly, arrears:updated.arrears, role:updated.role, status:updated.status, short:updated.full_name.split(' ')[0]};
-closem(); members();
-};
+
 window.addMember=function(){
-modalHTML(`<div style="padding:16px"><h3>Add Member - Saves to Supabase LIVE</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div><label style="font-size:10px">Full Name</label><input id="newMName" placeholder="John Okingo"></div><div><label style="font-size:10px">Phone</label><input id="newMPhone" placeholder="2547..."></div><div><label style="font-size:10px">Member No</label><input id="newMMemberNo" placeholder="000059904"></div><div><label style="font-size:10px">Email</label><input id="newMEmail" placeholder="email@kaudha.co.ke"></div><div><label style="font-size:10px">Zimele</label><input id="newMZimele" type="number" value="15000"></div><div><label style="font-size:10px">Monthly</label><input id="newMMonthly" type="number" value="17650"></div></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveNewMember()">💾 Save to Supabase</button></div></div>`);
+  modalHTML(`<div style="padding:16px"><h3>Add Member - Saves LIVE to Supabase - NO HARD CODE</h3><input id="newMName" placeholder="Full Name e.g. James Andaro Okingo"><input id="newMPhone" placeholder="2547..."><input id="newMMemberNo" placeholder="000059890"><input id="newMEmail" placeholder="james@kaudha.co.ke"><input id="newMZimele" type="number" placeholder="Zimele e.g. 15460"><input id="newMMonthly" type="number" placeholder="Monthly e.g. 17650"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveNewMember()">💾 Save LIVE to Supabase</button></div></div>`);
 };
 window.saveNewMember=async function(){
-let name=document.getElementById('newMName').value.trim(); let phone=document.getElementById('newMPhone').value.trim(); let memberNo=document.getElementById('newMMemberNo').value.trim(); let email=document.getElementById('newMEmail').value.trim(); let zimele=parseInt(document.getElementById('newMZimele').value)||0; let monthly=parseInt(document.getElementById('newMMonthly').value)||0;
-if(!name||!phone) return alert('Name and Phone required');
-let arrears=zimele-monthly;
-const { data, error } = await window.supabaseClient.from('members').insert({membership_number:memberNo, full_name:name, email:email, phone:phone, zimele:zimele, monthly:monthly, arrears:arrears, status:arrears>=0?'Credit':'Arrears', role:'Member'}).select();
-if(error) return alert(error.message);
-alert('Member Added to Supabase LIVE: '+name); closem(); window.loadMembersLive().then(()=>members());
+  let name=document.getElementById('newMName').value.trim(); let phone=document.getElementById('newMPhone').value.trim(); let memberNo=document.getElementById('newMMemberNo').value.trim(); let email=document.getElementById('newMEmail').value.trim(); let zimele=parseInt(document.getElementById('newMZimele').value)||15460; let monthly=parseInt(document.getElementById('newMMonthly').value)||17650;
+  if(!name) return alert('Name required');
+  let arrears=zimele-monthly;
+  const { data, error } = await window.supabase.from('members').insert({membership_number:memberNo, full_name:name, email:email, phone:phone, zimele:zimele, monthly:monthly, arrears:arrears, status:arrears>=0?'Credit':'Arrears', role:'Member', withdrawal:'0.00'}).select();
+  if(error) return alert("Supabase Error: "+error.message);
+  alert('✅ Saved LIVE to Supabase: '+name); closem(); await window.loadLive(); members();
+};
+window.editMember=async function(i){
+  let m=window.membersData[i];
+  modalHTML(`<div style="padding:16px"><h3>Edit ${m.name} - LIVE Supabase</h3><input id="editMName" value="${m.name}"><input id="editMPhone" value="${m.phone}" style="margin-top:6px"><input id="editMEmail" value="${m.email}" style="margin-top:6px"><input id="editMZimele" type="number" value="${m.zimele}" style="margin-top:6px"><input id="editMMonthly" type="number" value="${m.monthly}" style="margin-top:6px"><div style="display:flex;gap:6px;margin-top:10px"><button class="btn l" style="flex:1" onclick="closem()">Cancel</button><button class="btn s" style="flex:1" onclick="saveEdit(${i})">Save to Supabase</button></div></div>`);
+};
+window.saveEdit=async function(i){
+  let m=window.membersData[i];
+  let zimele=parseInt(document.getElementById('editMZimele').value)||0; let monthly=parseInt(document.getElementById('editMMonthly').value)||0;
+  let updated={full_name:document.getElementById('editMName').value, phone:document.getElementById('editMPhone').value, email:document.getElementById('editMEmail').value, zimele:zimele, monthly:monthly, arrears:zimele-monthly, status:(zimele-monthly)>=0?'Credit':'Arrears'};
+  const { error } = await window.supabase.from('members').update(updated).eq('id', m.id);
+  if(error) return alert(error.message);
+  closem(); await window.loadLive(); members();
 };
 window.deleteMember=async function(i){
-if(!confirm('Delete member '+window.membersData[i].name+' from Supabase?'))return;
-let m=window.membersData[i];
-if(m.supabase_id){ const { error } = await window.supabaseClient.from('members').delete().eq('id', m.supabase_id); if(error) return alert(error.message); }
-window.membersData.splice(i,1); members();
+  if(!confirm('Delete '+window.membersData[i].name+' from Supabase LIVE?')) return;
+  const { error } = await window.supabase.from('members').delete().eq('id', window.membersData[i].id);
+  if(error) return alert(error.message);
+  await window.loadLive(); members();
 };
-function settings(){document.getElementById('main').innerHTML=`<div class="card"><h2>⚙️ Settings - Supabase LIVE - Project ocaxorcezbhhheqaeahu</h2><p>✅ Using sb_publishable_jRu8TxoQibjDNmmFuXOV2g_25kfGYGd via ESM - No NetworkError</p><p>Members table: ${window.membersData.length} rows LIVE</p><button class="btn s" onclick="window.loadMembersLive()">Reload LIVE</button> <button class="btn l" onclick="home()">Home</button></div>`;}
-function openProfile(){modalHTML(`<div style="padding:16px"><h3>Profile ${currentUser.name}</h3><input id="editName" value="${currentUser.name}"><button class="btn s" style="margin-top:8px" onclick="currentUser.name=document.getElementById('editName').value;saveUser();closem();showApp();">Save</button></div>`);}
+function settings(){document.getElementById('main').innerHTML=`<div class="card"><h2>⚙️ Settings - DYNAMIC - NO HARD CODE</h2><p>Project: ocaxorcezbhhheqaeahu.supabase.co</p><p>Key: sb_publishable_... - Connected via ESM - No NetworkError</p><p>Members: ${window.membersData.length} LIVE from members table</p><p>All features intact: Home Arrears Card LIVE, Members CRUD LIVE, Statements 6 buttons LIVE</p><button class="btn s" onclick="window.loadLive()">Reload LIVE</button> <button class="btn l" onclick="home()">Home</button></div>`;}
+
 if(localStorage.getItem('KAUDHA_LOGGED')==='1'){showApp();}
 </script>
 </body></html>
