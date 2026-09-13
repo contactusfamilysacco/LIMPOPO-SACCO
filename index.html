@@ -1,165 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAUDHA Portal</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 2rem; background: #f4f6f8; }
-    .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem; }
-    .admin-only { display: none; background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin-top: 1rem; }
-    button { background: #0066cc; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
-    input { width: 100%; padding: 0.5rem; margin: 0.5rem 0; box-sizing: border-box; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-  </style>
-</head>
-<body>
+// Initialize Supabase Client
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <div class="card">
-    <h1 id="portal-title">Loading Portal...</h1>
-    <p id="notice-banner"></p>
-    <div id="auth-status">Checking Authentication...</div>
-  </div>
+let currentUserProfile = null;
 
-  <!-- Dynamic Content Area -->
-  <div class="card">
-    <h2>Members Directory</h2>
-    <table id="members-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Member No</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="members-list">
-        <tr><td colspan="4">Loading data...</td></tr>
-      </tbody>
-    </table>
-  </div>
+// Initialize app data on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchDynamicSettings();
+    await initializeAuthSession();
+    await loadMembersData();
+});
 
-  <!-- Dynamic Role-Based Control Panel (Visible Only to Admins) -->
-  <div id="admin-panel" class="card admin-only">
-    <h3>Admin Settings Control</h3>
-    <label for="input-title">Dynamic Portal Title:</label>
-    <input type="text" id="input-title" placeholder="Enter new title">
-    <button onclick="updateDynamicTitle()">Update Title</button>
-  </div>
+// Fetch dynamic settings from Supabase
+async function fetchDynamicSettings() {
+    const { data: settings, error } = await supabase.from('app_settings').select('*');
+    if (error) return console.error('Error fetching settings:', error);
 
-  <script>
-    // 1. Initialize Supabase Client
-    const SUPABASE_URL = "YOUR_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    let currentUser = null;
-    let userRole = 'member';
-
-    // 2. Load App Configuration and Session on Startup
-    window.addEventListener('DOMContentLoaded', async () => {
-      await loadDynamicSettings();
-      await checkUserSession();
-      await fetchMembers();
-    });
-
-    // 3. Dynamic App Settings Fetching
-    async function loadDynamicSettings() {
-      const { data, error } = await supabase.from('app_settings').select('*');
-      if (error) return console.error('Error fetching settings:', error);
-
-      data.forEach(setting => {
+    settings.forEach(setting => {
         if (setting.key === 'app_title') {
-          document.getElementById('portal-title').innerText = setting.value;
+            const titleElem = document.getElementById('app-title') || document.querySelector('header h1');
+            if (titleElem) titleElem.innerText = setting.value;
         }
-        if (setting.key === 'system_status') {
-          document.getElementById('notice-banner').innerText = setting.value.notice;
+        if (setting.key === 'portal_notice') {
+            const noticeElem = document.getElementById('portal-notice');
+            if (noticeElem) noticeElem.innerText = setting.value;
         }
-      });
-    }
+    });
+}
 
-    // 4. Role-Based Access Evaluation
-    async function checkUserSession() {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        document.getElementById('auth-status').innerHTML = `<p>Not logged in. <button onclick="login()">Log In</button></p>`;
-        return;
-      }
+// Manage user session & evaluate role permissions dynamically
+async function initializeAuthSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-      currentUser = session.user;
-
-      // Fetch dynamic role from database
-      const { data: profile } = await supabase
+    // Retrieve full profile and dynamic role assignment from database
+    const { data: profile, error } = await supabase
         .from('profiles')
-        .select('role, full_name')
-        .eq('id', currentUser.id)
+        .select('*')
+        .eq('id', session.user.id)
         .single();
 
-      if (profile) {
-        userRole = profile.role;
-        document.getElementById('auth-status').innerHTML = `Logged in as: <strong>${profile.full_name}</strong> (${userRole.toUpperCase()})`;
-        
-        // Enforce UI Access Controls based on DB Role
-        if (userRole === 'admin') {
-          document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-        }
-      }
-    }
+    if (error || !profile) return;
+    currentUserProfile = profile;
 
-    // 5. Dynamic Data Operations
-    async function fetchMembers() {
-      const { data: members, error } = await supabase
+    // Dynamic UI role evaluation
+    applyRoleBasedUI(profile.role);
+}
+
+// Dynamic display handling according to database role
+function applyRoleBasedUI(role) {
+    const adminElements = document.querySelectorAll('.admin-only, [data-role="admin"]');
+    const officialElements = document.querySelectorAll('.official-only, [data-role="official"]');
+
+    adminElements.forEach(el => el.style.display = (role === 'admin') ? '' : 'none');
+    officialElements.forEach(el => el.style.display = (role === 'admin' || role === 'official') ? '' : 'none');
+}
+
+// Fetch member table entries dynamically from database
+async function loadMembersData() {
+    const tableBody = document.getElementById('members-table-body') || document.querySelector('tbody');
+    if (!tableBody) return;
+
+    const { data: members, error } = await supabase
         .from('members')
         .select('*')
         .order('created_at', { ascending: false });
 
-      const tbody = document.getElementById('members-list');
-      tbody.innerHTML = '';
-
-      if (error || !members.length) {
-        tbody.innerHTML = '<tr><td colspan="4">No members found.</td></tr>';
+    if (error) {
+        console.error("Error loading members:", error);
         return;
-      }
-
-      members.forEach(m => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${m.full_name}</td>
-            <td>${m.email}</td>
-            <td>${m.membership_number}</td>
-            <td>${m.status}</td>
-          </tr>`;
-      });
     }
 
-    // 6. Admin Action (Modifies Database Dynamic Setting)
-    async function updateDynamicTitle() {
-      const newTitle = document.getElementById('input-title').value;
-      if (!newTitle) return;
+    tableBody.innerHTML = '';
+    members.forEach(member => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${member.membership_number}</td>
+            <td>${member.full_name}</td>
+            <td>${member.email}</td>
+            <td>${member.phone || 'N/A'}</td>
+            <td><span class="badge ${member.status.toLowerCase()}">${member.status}</span></td>
+            <td class="admin-only">
+                <button onclick="deleteMember('${member.id}')">Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(tr);
+    });
 
-      const { error } = await supabase
-        .from('app_settings')
-        .update({ value: JSON.stringify(newTitle) })
-        .eq('key', 'app_title');
-
-      if (error) {
-        alert('Permission denied or error updating setting: ' + error.message);
-      } else {
-        alert('Settings updated successfully!');
-        loadDynamicSettings();
-      }
+    // Re-apply role visibility to dynamically added action buttons
+    if (currentUserProfile) {
+        applyRoleBasedUI(currentUserProfile.role);
     }
+}
 
-    async function login() {
-      const email = prompt("Enter email:");
-      const password = prompt("Enter password:");
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) alert(error.message);
-      else location.reload();
+// Dynamically insert member record (replaces local array pushes)
+async function handleAddMember(event) {
+    if (event) event.preventDefault();
+    
+    const name = document.getElementById('member-name').value;
+    const email = document.getElementById('member-email').value;
+    const phone = document.getElementById('member-phone').value;
+    const memNo = document.getElementById('member-no').value;
+
+    const { data, error } = await supabase
+        .from('members')
+        .insert([{ 
+            full_name: name, 
+            email: email, 
+            phone: phone, 
+            membership_number: memNo 
+        }]);
+
+    if (error) {
+        alert("Failed to create member: " + error.message);
+    } else {
+        await loadMembersData();
+        // Close modal using existing modal function if present
+        if (typeof closeModal === 'function') closeModal();
     }
-  </script>
-</body>
-</html>
+}
+
+// Dynamically remove member record
+async function deleteMember(id) {
+    if (!confirm("Are you sure you want to delete this record?")) return;
+
+    const { error } = await supabase
+        .from('members')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert("Failed to delete member: " + error.message);
+    } else {
+        await loadMembersData();
+    }
+}
